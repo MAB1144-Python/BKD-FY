@@ -1,9 +1,7 @@
 from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
-from database import Base
-
-
+from utils.sesion_database  import Base
 
 factura_producto = Table(
     'factura_producto',

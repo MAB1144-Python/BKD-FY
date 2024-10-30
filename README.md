@@ -7,7 +7,7 @@ Backend proyecto ferreteria
 
 > - Paso 1: Clonar el repositorio 
 >```
-> git clone https://github.com/MAB1144-Python/Backend_general.git
+> git clone https://github.com/MAB1144-Python/BKD-FY.git
 >```
 >- Paso 3: Crear el ambiente virtual mediante el comando:
 >```
@@ -50,3 +50,15 @@ https://www.deadbear.io/simple-serverless-fastapi-with-aws-lambda/
 
 git remote show origin
 git reset HEAD^ --soft
+
+
+docker images
+docker PS
+docker -e PASSWORD_POSTGRES=Mab880821@ postgres
+docker exec -it eager_maxwell bash
+psql -U postgres --password
+
+
+docker run -it -e POSTGRES_USER="root" -e POSTGRES_PASSWORD=Mab880821  -d -p 5432:5432  postgres
+
+docker-compose up
