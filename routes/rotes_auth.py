@@ -1,17 +1,16 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import APIRouter,FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from .database import SessionLocal, engine, Base
-from .models import User
-from .schemas import UserCreate, UserInDB
-from .crud import get_user_by_username, create_user
+#from .database import SessionLocal, engine, Base
+#from .models import User
+from schemas.schemas_facturacion import UserCreate
+from utils.crud import get_user_by_username, create_user
 
 from utils.sesion_database import get_db
 
-app = FastAPI()
-
+router_auth = APIRouter()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -23,14 +22,14 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-@app.post("/register", response_model=UserInDB)
+@router_auth.post("/register", response_model=UserCreate)
 def register(user: UserCreate, db: Session = Depends(get_db)):
     db_user = get_user_by_username(db, username=user.username)
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
     return create_user(db=db, user=user)
 
-@app.post("/login", response_model=Token)
+@router_auth.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
@@ -53,3 +52,6 @@ def authenticate_user(db: Session, username: str, password: str):
 def create_access_token(data: dict):
     # Implement token creation logic here
     pass
+
+
+    

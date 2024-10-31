@@ -61,4 +61,8 @@ psql -U postgres --password
 
 docker run -it -e POSTGRES_USER="root" -e POSTGRES_PASSWORD=Mab880821  -d -p 5432:5432  postgres
 
+docker run -d --name my_postgres -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=mydatabase -p 5432:5432 -v pg_data:/var/lib/postgresql/data postgres:latest
+
 docker-compose up
+
+docker-compose up --build

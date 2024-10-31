@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from utils.sesion_database  import Base
+from schemas.shemas_user import UserCreate
 
 factura_producto = Table(
     'factura_producto',

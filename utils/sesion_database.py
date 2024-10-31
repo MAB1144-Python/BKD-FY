@@ -6,6 +6,9 @@ from psycopg2 import sql
 import time
 import random
 from sqlalchemy import create_engine
+from schemas.shemas_user import User
+from sqlalchemy.orm import Session
+
 
 
 db_name = 'postgres'
@@ -53,7 +56,7 @@ db_port = '5432'
 
 
 # Replace 'DATABASE_URL' with your actual database URL
-DATABASE_URL = "postgresql://user:Mab880821@localhost:5432/usuarios"
+DATABASE_URL = "postgresql://myuser:mypassword@localhost:5432/mydatabase"
 #DATABASE_URL = "sqlite:///./test.db"
 
 engine = create_engine(DATABASE_URL)
@@ -71,5 +74,5 @@ def get_db():
         db.close()
     return db
 
-
-
+def get_user_by_username(db: Session, username: str):
+    return db.query(User).filter(User.username == username).first()

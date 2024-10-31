@@ -1,0 +1,12 @@
+# Usa la imagen base de PostgreSQL
+FROM postgres:latest
+
+# Establece las variables de entorno para el usuario, la contraseña y la base de datos inicial
+ENV POSTGRES_USER=myuser
+ENV POSTGRES_PASSWORD=mypassword
+ENV POSTGRES_DB=mydatabase
+
+# Copia el archivo SQL en el directorio de inicialización de PostgreSQL
+COPY init.sql /docker-entrypoint-initdb.d/
+
+

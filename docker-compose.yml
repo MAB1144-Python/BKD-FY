@@ -1,44 +1,58 @@
+# # docker-compose.yml
+
 # version: '3.8'
 
 # services:
-#   postgres:
+#   db:
 #     image: postgres:latest
 #     environment:
-#       POSTGRES_USER: user
-#       POSTGRES_PASSWORD: password
-#       POSTGRES_DB: mydatabase
+#       POSTGRES_USER: example
+#       POSTGRES_PASSWORD: example
+#       POSTGRES_DB: example
 #     ports:
 #       - "5432:5432"
+#     networks:
+#       - mynetwork
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U myuser"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
 #     volumes:
 #       - postgres_data:/var/lib/postgresql/data
 
+#   web:
+#     build: .
+#     command: uvicorn main:app --host 0.0.0.0
+#     volumes:
+#       - .:/app
+#     ports:
+#       - 8008:8000
+# networks:
+#   mynetwork:
+#     driver: bridge
 # volumes:
-#   postgres_data:
+#   db_data:
+
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: mydatabase
+  db:
+    build:
+      context: .
+      dockerfile: Dockerfile.db  # Usar Dockerfile para la base de datos
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  python_app:
-    build: .
+      - db_data:/var/lib/postgresql/data
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev  # Usar Dockerfile para desarrollo
+    ports:
+      - "8225:8225"
     depends_on:
-      - postgres
-    environment:
-      - POSTGRES_HOST=postgres
-      - POSTGRES_DB=mydatabase
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-    volumes:
-      - .:/app
+      - db  # Asegúrate de que la base de datos esté disponible
 
 volumes:
-  postgres_data:
+  db_data:
