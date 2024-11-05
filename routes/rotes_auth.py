@@ -22,9 +22,14 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-@router_auth.post("/register", response_model=UserCreate)
+@router_auth.post(    
+    path="/register_fy/",
+    status_code=status.HTTP_200_OK,
+    tags=['User Tio_Conejo'],
+    response_model = UserCreate,
+    summary="""Register usuario.""")
 def register(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = get_user_by_username(db, username=user.username)
+    db_user = get_user_by_username(db, username=user.document)
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
     return create_user(db=db, user=user)

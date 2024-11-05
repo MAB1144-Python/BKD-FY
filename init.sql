@@ -67,3 +67,4 @@ CREATE TABLE IF NOT EXISTS sales (
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
+

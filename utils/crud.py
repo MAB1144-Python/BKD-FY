@@ -10,7 +10,13 @@ def get_user_by_username(db: Session, username: str):
 
 def create_user(db: Session, user: UserCreate):
     fake_hashed_password = pwd_context.hash(user.password)
-    db_user = User(username=user.username, email=user.email, hashed_password=fake_hashed_password)
+    db_user = User(
+        username=user.username,
+        email=user.email,
+        hashed_password=fake_hashed_password,
+        full_name=user.full_name,
+        disabled=user.disabled
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
