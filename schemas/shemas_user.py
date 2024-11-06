@@ -22,6 +22,7 @@ class User(Base):
     hashed_password = Column(String)
 
 class UserCreate(BaseModel):
+    user_id: str = Field(default_factory="user_default", description="user_id")
     document: str = Field(..., description="document", max_length=50)
     name: str = Field(..., description="name", max_length=50)
     email: EmailStr = Field(..., description="user email")

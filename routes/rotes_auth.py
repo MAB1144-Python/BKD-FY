@@ -29,7 +29,7 @@ class Token(BaseModel):
     response_model = UserCreate,
     summary="""Register usuario.""")
 def register(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = get_user_by_username(db, username=user.document)
+    db_user = get_user_by_username(db, document=user.document)
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
     return create_user(db=db, user=user)

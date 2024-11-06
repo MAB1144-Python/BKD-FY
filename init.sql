@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS suppliers_ferroelectricos_yambitara (
 );
 
 -- Crear una tabla para registrar las ventas
-CREATE TABLE IF NOT EXISTS sales (
+CREATE TABLE IF NOT EXISTS sales_ferroelectricos_yambitara (
     sale_id SERIAL NOT NULL PRIMARY KEY,
     id_sale_dian VARCHAR(50) NOT NULL,
     seller_id VARCHAR(50) NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS sales (
     total DECIMAL(15, 2) NOT NULL,
     sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id VARCHAR(50) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
+    FOREIGN KEY (user_id) REFERENCES users_ferroelectricos_yambitara(user_id),
+    FOREIGN KEY (product_id) REFERENCES products_ferroelectricos_yambitara(product_id)
 );
 
