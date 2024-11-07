@@ -4,7 +4,8 @@ from sqlalchemy import text
 #from models import Factura, Producto, Cliente
 #from schemas.schemas_facturacion import FacturaCreate, FacturaResponse, Factura, Producto, Cliente
 from utils.sesion_database import get_db
-
+from utils.connect import connect_db
+db = connect_db()
 
 
 router_factura = APIRouter()

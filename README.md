@@ -45,6 +45,8 @@ Backend proyecto ferreteria
 >```
 >  docker run -d -p 8225:8225 backend-general
 >```
+guia base de datos postgres
+https://neon.tech/postgresql/postgresql-python/create-tables
 
 https://www.deadbear.io/simple-serverless-fastapi-with-aws-lambda/
 

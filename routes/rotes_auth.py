@@ -10,13 +10,16 @@ from utils.crud import get_user_by_username, create_user
 
 from utils.sesion_database import get_db
 
+from utils.connect import connect_db
+db = connect_db()
+
 router_auth = APIRouter()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-db = get_db()
+
 
 class Token(BaseModel):
     access_token: str
