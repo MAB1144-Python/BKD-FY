@@ -65,6 +65,17 @@ docker run -it -e POSTGRES_USER="root" -e POSTGRES_PASSWORD=Mab880821  -d -p 543
 
 docker run -d --name my_postgres -e POSTGRES_USER=myuser -e POSTGRES_PASSWORD=mypassword -e POSTGRES_DB=mydatabase -p 5432:5432 -v pg_data:/var/lib/postgresql/data postgres:latest
 
-docker-compose up
+## docker-compose up
 
-docker-compose up --build
+## docker-compose up --build
+
+Cuales volumenes hay
+
+## docker volume ls
+
+Eliminar todos los volúmenes junto con los contenedores de un docker-compose
+
+##  docker-compose down -v
+
+volumen especifico
+## docker volume rm nombre_del_volumen

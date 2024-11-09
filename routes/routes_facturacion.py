@@ -3,22 +3,21 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 #from models import Factura, Producto, Cliente
 #from schemas.schemas_facturacion import FacturaCreate, FacturaResponse, Factura, Producto, Cliente
-from utils.sesion_database import get_db
 from utils.connect import connect_db
 db = connect_db()
 
 
 router_factura = APIRouter()
 
-db=get_db()
+# db=get_db()
 
-@router_factura.get("/consulta_db")
-def consulta_db(db: Session = Depends(get_db)):
-    try:
-        result = db.execute(text("SELECT 1")).fetchone()
-        return {"resultado": result[0]}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# @router_factura.get("/consulta_db")
+# def consulta_db(db: Session = Depends(get_db)):
+#     try:
+#         result = db.execute(text("SELECT 1")).fetchone()
+#         return {"resultado": result[0]}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
 
 
 # @router_factura.post("/facturas/", response_model=FacturaResponse)

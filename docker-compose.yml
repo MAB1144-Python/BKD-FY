@@ -44,15 +44,27 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data  # Persistencia de datos
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Copia init.sql en el contenedor
+    networks:
+      - mynetwork
+
   app:
     build:
       context: .
       dockerfile: Dockerfile.dev  # Usar Dockerfile para desarrollo
+    #environment:
+    #  DATABASE_URL: "postgresql://myuser:mypassword@db:5432/mydatabase"  # Cadena de conexión a PostgreSQL
     ports:
       - "8225:8225"
     depends_on:
-      - db  # Asegúrate de que la base de datos esté disponible
+       - db  # Asegúrate de que la base de datos esté disponible
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
 
 volumes:
   db_data:

@@ -8,9 +8,10 @@ from utils.crud import get_user_by_username, create_user, query_db_insert
 from utils.config import load_config
 import psycopg2
 
-from utils.sesion_database import get_db
+from services.authentic import authenticate
 
 from utils.connect import connect_db
+import os
 db = connect_db()
 
 router_auth = APIRouter()
@@ -31,9 +32,8 @@ class Token(BaseModel):
     tags=['User'],
     #response_model = UserCreate,
     summary="""Register usuario.""")
-async def register(user: UserCreate, db: Session = Depends(get_db)):
+async def register(user: UserCreate):
     db_user = query_user_exists(user.document) #get_user_by_username(db, document=user.document)
-    print("mensaje",db_user)
     if db_user["message"]:
         raise HTTPException(status_code=400, detail="Username already registered")
     user_id = pwd_context.hash(user.document + user.email)
@@ -49,17 +49,35 @@ async def register(user: UserCreate, db: Session = Depends(get_db)):
      
     return {"status": "ok", "message": "User created"}      
 
-@router_auth.post("/login", response_model=Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = authenticate_user(db, form_data.username, form_data.password)
-    if not user:
+
+
+
+
+@router_auth.post("/login",
+    status_code=status.HTTP_200_OK,
+    tags=['User'],
+    #response_model = UserCreate,
+    summary="""Register usuario.""", response_model=Token)
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    db_user = query_user_exists_email(form_data.username)
+    if not db_user["message"]:
+        raise HTTPException(status_code=400, detail="Username not registered")
+    token = authenticate(form_data.username, form_data.password)
+    print("token",token)
+    if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token = create_access_token(data={"sub": user.username})
-    return {"access_token": access_token, "token_type": "bearer"}
+    else:
+        return {
+            "access_token": token['access_token'],
+            "token_type": "bearer"
+        } 
+
+
+#/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*
 
 def authenticate_user(db: Session, username: str, password: str):
     user = get_user_by_username(db, username)
@@ -75,9 +93,23 @@ def create_access_token(data: dict):
 
 
 
+def query_user_exists_email(email: str):
+    sql = f"SELECT * FROM {os.getenv('DB_USER_TABLE')} WHERE email = %s"
+    exists = False
+    try:
+        config = load_config()
+        with psycopg2.connect(**config) as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (email,))
+                exists = cur.fetchone() is not None
+            # commit the changes to the database
+            conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("presento el error ",error)
+    return {"message":exists}
 
 def query_user_exists(document: str):
-    sql = "SELECT * FROM users_ferroelectricos_yambitara WHERE document = %s"
+    sql = f"SELECT * FROM {os.getenv('DB_USER_TABLE')} WHERE document = %s"
     exists = False
     try:
         config = load_config()

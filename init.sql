@@ -9,14 +9,14 @@
 -- created_at:   Marca de tiempo de la creación del registro (tipo TIMESTAMP, valor por defecto CURRENT_TIMESTAMP).
 -- Crear una tabla para los usuarios
 -- Eliminar todas las tablas si existen
-DROP TABLE IF EXISTS sales_ferroelectricos_yambitara;
-DROP TABLE IF EXISTS suppliers_ferroelectricos_yambitara;
-DROP TABLE IF EXISTS products_ferroelectricos_yambitara;
-DROP TABLE IF EXISTS user_types_ferroelectricos_yambitara;
-DROP TABLE IF EXISTS users_ferroelectricos_yambitara;
+-- DROP TABLE IF EXISTS sales_ferroelectricos_yambitara;
+-- DROP TABLE IF EXISTS suppliers_ferroelectricos_yambitara;
+-- DROP TABLE IF EXISTS products_ferroelectricos_yambitara;
+-- DROP TABLE IF EXISTS user_types_ferroelectricos_yambitara;
+-- DROP TABLE IF EXISTS users_ferroelectricos_yambitara;
 
 CREATE TABLE IF NOT EXISTS users_ferroelectricos_yambitara (
-    user_id SERIAL NOT NULL PRIMARY KEY,
+    user_id  VARCHAR(255) NOT NULL UNIQUE PRIMARY KEY,
     document VARCHAR(50) NOT NULL UNIQUE,
     name VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS sales_ferroelectricos_yambitara (
     profit_sale DECIMAL(15, 2) NOT NULL,
     total DECIMAL(15, 2) NOT NULL,
     sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id VARCHAR(50) NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users_ferroelectricos_yambitara(user_id),
     FOREIGN KEY (product_id) REFERENCES products_ferroelectricos_yambitara(product_id)
 );
