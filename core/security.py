@@ -56,9 +56,6 @@ def verify_password(password: str, hashed_pass: str) -> bool:
     input: a password and hashed_password as a string
     output: a boolean indicating if the password make match or not: false is not verified
     """
-    print("security 59", password)
-    print("security 59", hashed_pass)
-    print("security 59",password_context.verify(password, hashed_pass))
     return password_context.verify(password, hashed_pass)
 
 

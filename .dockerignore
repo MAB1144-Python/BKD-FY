@@ -1,2 +1,6 @@
 app2.py
 .gitignore
+README.md
+venv/
+.history/
+__pycache__/

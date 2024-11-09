@@ -63,7 +63,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     if not db_user["message"]:
         raise HTTPException(status_code=400, detail="Username not registered")
     token = authenticate(form_data.username, form_data.password)
-    print("token",token)
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -131,12 +130,9 @@ def query_db_insert(sql_query, data):
         with  psycopg2.connect(**config) as conn:
             with  conn.cursor() as cur:
                 # execute the INSERT statement
-                print("data",data)
                 cur.execute(sql_query, data)
-                print("data",data)
                 # commit the changes to the database
                 conn.commit()
-        print("get ",get_all_users())
     except (Exception, psycopg2.DatabaseError) as error:
         print("error ",error)
     finally:
