@@ -3,10 +3,10 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-#from .database import SessionLocal, engine, Base
-#from .models import User
-from schemas.schemas_facturacion import UserCreate
-from utils.crud import get_user_by_username, create_user
+from schemas.schemas_user import UserCreate, User
+from utils.crud import get_user_by_username, create_user, query_db_insert
+from utils.config import load_config
+import psycopg2
 
 from utils.sesion_database import get_db
 
@@ -28,17 +28,29 @@ class Token(BaseModel):
 @router_auth.post(    
     path="/register_fy/",
     status_code=status.HTTP_200_OK,
-    tags=['User Tio_Conejo'],
-    response_model = UserCreate,
+    tags=['User'],
+    #response_model = UserCreate,
     summary="""Register usuario.""")
-def register(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = get_user_by_username(db, document=user.document)
-    if db_user:
+async def register(user: UserCreate, db: Session = Depends(get_db)):
+    db_user = query_user_exists(user.document) #get_user_by_username(db, document=user.document)
+    print("mensaje",db_user)
+    if db_user["message"]:
         raise HTTPException(status_code=400, detail="Username already registered")
-    return create_user(db=db, user=user)
+    user_id = pwd_context.hash(user.document + user.email)
+    user_obj = User(**user.dict(), user_id=user_id)
+    
+    """ Insert a new user into the users_ferroelectricos_yambitara table """
+    sql = """INSERT INTO users_ferroelectricos_yambitara (user_id, password, email, document, name, type_document, contact_user)
+                VALUES (%s, %s, %s, %s, %s, %s, %s);"""
+    hashed_password = pwd_context.hash(user.password)
+    #data = (user.user_id, hashed_password, user.email, user.document, user.name, user.type_document, user.contact_user)
+    data = (user_obj.user_id, hashed_password, user_obj.email, user_obj.document, user_obj.name, user_obj.type_document, user_obj.contact_user)
+    user_id = query_db_insert(sql, data)
+     
+    return {"status": "ok", "message": "User created"}      
 
 @router_auth.post("/login", response_model=Token)
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -62,4 +74,52 @@ def create_access_token(data: dict):
     pass
 
 
+
+
+def query_user_exists(document: str):
+    sql = "SELECT * FROM users_ferroelectricos_yambitara WHERE document = %s"
+    exists = False
+    try:
+        config = load_config()
+        with psycopg2.connect(**config) as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (document,))
+                exists = cur.fetchone() is not None
+            # commit the changes to the database
+            conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("presento el error ",error)
+    return {"message":exists}
+
+
+def query_db_insert(sql_query, data):
+    vendor_id = None
+    try:
+        config = load_config()
+        with  psycopg2.connect(**config) as conn:
+            with  conn.cursor() as cur:
+                # execute the INSERT statement
+                print("data",data)
+                cur.execute(sql_query, data)
+                print("data",data)
+                # commit the changes to the database
+                conn.commit()
+        print("get ",get_all_users())
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("error ",error)
+    finally:
+        return vendor_id
     
+
+def get_all_users():
+    sql = "SELECT * FROM users_ferroelectricos_yambitara"
+    users = []
+    try:
+        config = load_config()
+        with psycopg2.connect(**config) as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql)
+                users = cur.fetchall()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error: ", error)
+    return users

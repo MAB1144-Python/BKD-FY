@@ -6,7 +6,7 @@ from psycopg2 import sql
 import time
 import random
 from sqlalchemy import create_engine
-from schemas.shemas_user import User
+from schemas.schemas_user import User
 from sqlalchemy.orm import Session
 
 

@@ -9,6 +9,7 @@ def connect(config):
             return conn
     except (psycopg2.DatabaseError, Exception) as error:
         print(error)
-def conect_db():
+        
+def connect_db():
     config = load_config()
     connect(config)
