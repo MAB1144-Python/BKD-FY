@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /back-end/
 
-CMD uvicorn --host 0.0.0.0 --port 8225 main:app
+CMD uvicorn --host 0.0.0.0 --port 8220 main:app
 
 
 
