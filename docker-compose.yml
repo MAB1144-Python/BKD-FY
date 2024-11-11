@@ -2,18 +2,20 @@ version: '3.8'
 
 services:
   db:
+    container_name: postgres_db_Ferroelectricos_Yambitara
     build:
       context: .
       dockerfile: Dockerfile.db  # Usar Dockerfile para la base de datos
     ports:
       - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data  # Persistencia de datos
+      - db_volumes_Ferroelectricos_Yambitara:/var/lib/postgresql/data  # Persistencia de datos
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Copia init.sql en el contenedor
     networks:
       - mynetwork
 
   app:
+    container_name: Backend_Ferroelectricos_Yambitara
     build:
       context: .
       dockerfile: Dockerfile.dev  # Usar Dockerfile para desarrollo
@@ -31,4 +33,4 @@ networks:
     driver: bridge
 
 volumes:
-  db_data:
+  db_volumes_Ferroelectricos_Yambitara:
