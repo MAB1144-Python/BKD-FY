@@ -59,17 +59,23 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     if not db_user["message"]:
         raise HTTPException(status_code=400, detail="Username not registered")
     token = authenticate(form_data.username, form_data.password)
-    if not token:
+    print(token)
+    try:
+        if not token:
+            raise HTTPException(status_code=502, detail="Password incorrect")
+        else:
+            return {
+                "access_token": token['access_token'],
+                "token_type": "bearer"
+            } 
+            
+    except:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    else:
-        return {
-            "access_token": token['access_token'],
-            "token_type": "bearer"
-        } 
+        
 
 
 #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*

@@ -37,13 +37,14 @@ def authenticate(email: str, password: str) -> Optional[User]:
         if variable_get_user_by_email["message"]:
                 # si en el usuario se encuentra un @ significa que es un email 
                 check_result_by_username=verify_password(password=password, hashed_pass=variable_get_user_by_email["password"])
-                print("check_result_by_username",check_result_by_username)
                 if check_result_by_username:
                     return {
                         "access_token": create_acess_token(email)
                     }
                 else:
-                    raise HTTPException(status_code=502, detail="Password incorrect")
+                    return {
+                        "access_token_dont": "null"
+                    }
         else:
             raise HTTPException(status_code=502, detail="Usuario no encontrado")
     except:
