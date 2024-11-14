@@ -27,6 +27,7 @@ class UserCreate(BaseModel):
     email: EmailStr = Field(..., description="user email")
     password: str = Field(..., min_length=8, max_length=25, description="password")
     type_document: str = Field(..., description="type of document", max_length=50)
+    type_user: str = Field(..., description="type of user", max_length=50)
     contact_user: str = Field(..., description="contact user", max_length=100)
     created_at: str = Field(default_factory=generate_date)
     class Config:
@@ -37,6 +38,7 @@ class UserCreate(BaseModel):
             "email": "test@gmail.com",
             "password": "123456789",
             "type_document": "passport",
+            "type_user": "admin",
             "contact_user": "contact_name"
             }
         }
@@ -48,6 +50,7 @@ class User(BaseModel):
     email: EmailStr = Field(..., description="user email")
     password: str = Field(..., min_length=8, max_length=25, description="password")
     type_document: str = Field(..., description="type of document", max_length=50)
+    type_user: str = Field(..., description="type of user", max_length=50)
     contact_user: str = Field(..., description="contact user", max_length=100)
     created_at: str = Field(default_factory=generate_date)
     class Config:
@@ -58,6 +61,7 @@ class User(BaseModel):
             "email": "test@gmail.com",
             "password": "123456789",
             "type_document": "passport",
+            "type_user": "admin",
             "contact_user": "contact_name"
             }
         }
