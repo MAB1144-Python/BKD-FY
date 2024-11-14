@@ -1,15 +1,9 @@
-from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Table
+from pydantic import BaseModel, Field, EmailStr
+from sqlalchemy import Integer, String, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
-from utils.sesion_database  import Base
+
 from schemas.schemas_user import UserCreate
 
-factura_producto = Table(
-    'factura_producto',
-    Base.metadata,
-    Column('factura_id', Integer, ForeignKey('facturas.id'), primary_key=True),
-    Column('producto_id', Integer, ForeignKey('productos.id'), primary_key=True)
-)
 
 class FacturaCreate(BaseModel):
     cliente_id: int
@@ -21,30 +15,53 @@ class FacturaResponse(BaseModel):
     cliente_id: int
     productos: list[int]
     total: float
+
+class Product_Register(BaseModel):
+    name: str = Field(..., min_length=1, max_length=255, description="Product name")
+    reference: str = Field(..., min_length=1, max_length=20, description="Product reference")
+    cost: float = Field(..., gt=0, description="Product cost")
+    sale_price: float = Field(..., gt=0, description="Product sale price")
+    profit_percentage: float = Field(..., ge=0, le=100, description="Profit percentage")
+    quantity: int = Field(..., ge=1, description="Product quantity")
+    distributor: str = Field(..., min_length=1, max_length=255, description="Distributor name")
     
-class Factura(Base):
-    __tablename__ = 'facturas'
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "Product Name",
+                "reference": "Product Reference",
+                "cost": 100.00,
+                "sale_price": 150.00,
+                "profit_percentage": 50.00,
+                "quantity": 10,
+                "distributor": "Distributor Name"
+            }
+        }
 
-    id = Column(Integer, primary_key=True, index=True)
-    cliente_id = Column(Integer, ForeignKey('clientes.id'))
-    total = Column(Float)
-    productos = relationship('Producto', secondary=factura_producto, back_populates='facturas')
-    cliente = relationship('Cliente', back_populates='facturas')
-
-class Producto(Base):
-    __tablename__ = 'productos'
-
-    id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String, index=True)
-    precio = Column(Float)
-    facturas = relationship('Factura', secondary=factura_producto, back_populates='productos')
-
-class Cliente(Base):
-    __tablename__ = 'clientes'
-
-    id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
-    facturas = relationship('Factura', back_populates='cliente')
+class Distributor_register(BaseModel):
+    distributor_name: str = Field(..., min_length=1, max_length=255, description="Distributor name")
+    distributor_nit: str = Field(..., min_length=1, max_length=50, description="Distributor NIT")
+    contact_name: str = Field(..., min_length=1, max_length=255, description="Contact name")
+    contact_phone: str = Field(..., min_length=1, max_length=50, description="Contact phone")
+    contact_email: EmailStr = Field(..., description="Contact email")
+    contact_name_accounting: str = Field(..., min_length=1, max_length=255, description="Accounting contact name")
+    contact_phone_accounting: str = Field(..., min_length=1, max_length=50, description="Accounting contact phone")
+    contact_email_accounting: EmailStr = Field(..., description="Accounting contact email")
+    city_address: str = Field(..., min_length=1, max_length=255, description="City address")
+    class Config:
+        schema_extra: str = {
+            "example": {
+                "distributor_id": "123456",
+                "distributor_name": "Distributor Name",
+                "distributor_nit": "123456789",
+                "contact_name": "Contact Name",
+                "contact_phone": "1234567890",
+                "contact_email": "contact@example.com",
+                "contact_name_accounting": "Accounting Contact Name",
+                "contact_phone_accounting": "0987654321",
+                "contact_email_accounting": "accounting@example.com",
+                "city_address": "City Address"
+            }
+        }
 
 

@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS users_ferroelectricos_yambitara (
     name VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    type_user VARCHAR(50) NOT NULL,
     type_document VARCHAR(50) NOT NULL,
     contact_user VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

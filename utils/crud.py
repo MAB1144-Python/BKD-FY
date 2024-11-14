@@ -49,7 +49,7 @@ def query_db_insert(sql_query, data):
                 conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-    print("get all user",get_all_users())
+    print("get all PRODUCT",get_all_users())
     return{"message":"Usuario creado con exito"}
     # finally:
     #     return vendor_id

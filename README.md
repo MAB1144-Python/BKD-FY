@@ -84,4 +84,6 @@ volumen especifico
 ## docker stop -t 0 Backend_Ferroelectricos_Yambitara
 ## docker rm -f postgres_db_Ferroelectricos_Yambitara
 ## docker rm -f Backend_Ferroelectricos_Yambitara
+## docker rmi bkd-fy-app
+## docker rmi bkd-fy-db
 ## docker volume rm db_volumes_Ferroelectricos_Yambitara
