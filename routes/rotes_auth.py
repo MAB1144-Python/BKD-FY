@@ -24,27 +24,26 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 class Token(BaseModel):
     access_token: str
     token_type: str
-
+    
+    
 @router_auth.post(path="/register_fy/",
     status_code=status.HTTP_200_OK,
     tags=['User'],
     #response_model = UserCreate,
     summary="""Register usuario.""")
 async def register(user: UserCreate):
-    db_user = query_user_exists(user.document) #get_user_by_username(db, document=user.document)
+    db_user = query_user_exists(user.document) 
     if db_user["message"]:
         raise HTTPException(status_code=400, detail="Username already registered")
     user_id = pwd_context.hash(user.document + user.email)
     user_obj = User(**user.dict(), user_id=user_id)
     
     """ Insert a new user into the users_ferroelectricos_yambitara table """
-    sql = """INSERT INTO users_ferroelectricos_yambitara (user_id, password, email, document, name, type_document, contact_user)
-                VALUES (%s, %s, %s, %s, %s, %s, %s);"""
+    sql = """INSERT INTO users_ferroelectricos_yambitara (user_id, password, email, document, name, type_document, contact_user, type_user)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"""
     hashed_password = pwd_context.hash(user.password)
-    #data = (user.user_id, hashed_password, user.email, user.document, user.name, user.type_document, user.contact_user)
-    data = (user_obj.user_id, hashed_password, user_obj.email, user_obj.document, user_obj.name, user_obj.type_document, user_obj.contact_user)
+    data = (user_obj.user_id, hashed_password, user_obj.email, user_obj.document, user_obj.name, user_obj.type_document, user_obj.contact_user, user_obj.type_user)
     user_id = query_db_insert(sql, data)
-     
     return {"status": "ok", "message": "User created"}      
 
 @router_auth.post("/login",
