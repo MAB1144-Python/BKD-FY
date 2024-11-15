@@ -62,3 +62,50 @@ class User(BaseModel):
             }
         }
 
+
+class SupplierCreate(BaseModel):
+    supplier_nit: str = Field(..., description="Supplier NIT", max_length=50)
+    supplier_name: str = Field(..., description="Supplier Name", max_length=100)
+    supplier_contact_name: str = Field(None, description="Contact Name", max_length=100)
+    supplier_contact_email: EmailStr = Field(None, description="Contact Email")
+    supplier_contact_contable: str = Field(None, description="Contact Contable", max_length=100)
+    supplier_phone: str = Field(None, description="Phone", max_length=20)
+    supplier_phone_two: str = Field(None, description="Phone Two", max_length=20)
+    supplier_address: str = Field(None, description="Address")
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "supplier_nit": "123456789",
+                "supplier_name": "Supplier Name",
+                "contact_name": "Contact Name",
+                "contact_email": "contact@example.com",
+                "contact_contable": "Contact Contable",
+                "phone": "1234567890",
+                "phone_two": "0987654321",
+                "address": "123 Supplier St.",
+            }
+        }
+
+class ProductCreate(BaseModel):
+    product_name: str = Field(..., description="Product Name", max_length=100)
+    cost_products: str = Field(..., description="Cost of products", example="100.00")
+    sale_price: str = Field(..., description="Sale price", example="150.00")
+    quantity: int = Field(..., description="Quantity", example=10)
+    suppliers: str = Field(..., description="Suppliers", max_length=100, example="Supplier Name")
+    description_products: str = Field(None, description="Description of products", example="A detailed description")
+    profit_margin: str = Field(..., description="Profit margin", example="50.00")
+    image_reference: str = Field(None, description="Image reference", example="image_url")
+    class Config:
+        schema_extra = {
+            "example": {
+                "product_name": "Product Name",
+                "cost_products": 100.00,
+                "sale_price": 150.00,
+                "quantity": 10,
+                "suppliers": "Supplier Name",
+                "description_products": "A detailed description",
+                "profit_margin": 50.00,
+                "image_reference": "image_url",
+            }
+        }

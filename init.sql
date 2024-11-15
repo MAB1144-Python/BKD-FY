@@ -36,10 +36,11 @@ CREATE TABLE IF NOT EXISTS user_types_ferroelectricos_yambitara (
 
 -- Crear una tabla para registrar los detalles de los productos
 CREATE TABLE IF NOT EXISTS products_ferroelectricos_yambitara (
-    product_id SERIAL NOT NULL PRIMARY KEY,
+    product_id  VARCHAR(255) NOT NULL UNIQUE PRIMARY KEY,
+    product_name VARCHAR(100) NOT NULL,
     cost_products DECIMAL(15, 2) NOT NULL,
     sale_price DECIMAL(15, 2) NOT NULL,
-    quantity INT NOT NULL,
+    quantity DECIMAL(15, 2) NOT NULL,
     suppliers VARCHAR(100) NOT NULL,
     description_products TEXT,
     profit_margin DECIMAL(5, 2) NOT NULL,
@@ -49,15 +50,16 @@ CREATE TABLE IF NOT EXISTS products_ferroelectricos_yambitara (
 
 -- Crear una tabla para los proveedores
 CREATE TABLE IF NOT EXISTS suppliers_ferroelectricos_yambitara (
-    supplier_nit VARCHAR(50) NOT NULL UNIQUE PRIMARY KEY,
+    supplier_id VARCHAR(255) NOT NULL UNIQUE PRIMARY KEY,
+    supplier_nit VARCHAR(50) NOT NULL UNIQUE,
     supplier_name VARCHAR(100) NOT NULL,
-    contact_name VARCHAR(100),
-    contact_email VARCHAR(100),
-    contact_contable VARCHAR(100),
-    phone VARCHAR(20),
-    phone_two VARCHAR(20),
-    address TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    supplier_contact_name VARCHAR(100),
+    supplier_contact_email VARCHAR(100),
+    supplier_contact_contable VARCHAR(100),
+    supplier_phone VARCHAR(20),
+    supplier_phone_two VARCHAR(20),
+    supplier_address TEXT,
+    supplier_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Crear una tabla para registrar las ventas
@@ -65,7 +67,7 @@ CREATE TABLE IF NOT EXISTS sales_ferroelectricos_yambitara (
     sale_id SERIAL NOT NULL PRIMARY KEY,
     id_sale_dian VARCHAR(50) NOT NULL,
     seller_id VARCHAR(50) NOT NULL,
-    product_id INT NOT NULL,
+    product_id VARCHAR(255) NOT NULL,
     quantity INT NOT NULL,
     cost_sale DECIMAL(15, 2) NOT NULL,
     profit_sale DECIMAL(15, 2) NOT NULL,

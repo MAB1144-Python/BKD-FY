@@ -3,9 +3,9 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from schemas.schemas_user import UserCreate, User
-from utils.crud import get_user_by_username, create_user, query_db_insert
-from utils.crud_db import query_user_exists, query_user_exists_email
+from schemas.schemas_user import UserCreate, User, SupplierCreate, ProductCreate
+from utils.crud import *
+from utils.crud_db import *
 
 from services.authentic import authenticate
 
@@ -25,8 +25,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-@router_auth.post(    
-    path="/register_fy/",
+@router_auth.post(path="/register_fy/",
     status_code=status.HTTP_200_OK,
     tags=['User'],
     #response_model = UserCreate,
@@ -48,12 +47,11 @@ async def register(user: UserCreate):
      
     return {"status": "ok", "message": "User created"}      
 
-
 @router_auth.post("/login",
     status_code=status.HTTP_200_OK,
     tags=['User'],
     #response_model = UserCreate,
-    summary="""Register usuario.""", response_model=Token)
+    summary="""Login usuario.""", response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     db_user = query_user_exists_email(form_data.username)
     if not db_user["message"]:
@@ -76,6 +74,81 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             headers={"WWW-Authenticate": "Bearer"},
         )
         
+@router_auth.post(path="/create_supplier/",
+    status_code=status.HTTP_201_CREATED,
+    tags=['Supplier'],
+    summary="""Create a new supplier."""
+)
+async def create_supplier(supplier: SupplierCreate):
+    db_user = query_user_exists_supplier(supplier.supplier_nit)
+    if db_user["message"]:
+        raise HTTPException(status_code=400, detail="Username already registered")
+    """ Insert a new supplier into the suppliers_ferroelectricos_yambitara table """
+    sql_supplier = """INSERT INTO suppliers_ferroelectricos_yambitara (supplier_id, supplier_nit, supplier_name, supplier_contact_name, supplier_contact_email, supplier_contact_contable, supplier_phone, supplier_phone_two, supplier_address)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+    supplier_id = pwd_context.hash(supplier.supplier_nit + supplier.supplier_name)
+    data_supplier = (
+        supplier_id, supplier.supplier_nit, supplier.supplier_name, supplier.supplier_contact_name,
+        supplier.supplier_contact_email, supplier.supplier_contact_contable, supplier.supplier_phone,
+        supplier.supplier_phone_two, supplier.supplier_address
+    )
+    supplier_id = query_db_insert(sql_supplier, data_supplier)
+    
+    return {"status": 200, "message": "Supplier created"}
+        
+@router_auth.post(path="/create_product/",
+    status_code=status.HTTP_201_CREATED,
+    tags=['Product'],
+    summary="""Create a new product."""
+)
+async def create_product(product: ProductCreate):
+    db_user = query_user_exists_products(product.product_name)
+    print(db_user)
+    if db_user["message"]:
+        raise HTTPException(status_code=400, detail="Product already registered")
+    """ Insert a new product into the products_ferroelectricos_yambitara table """
+    sql_product = f"""INSERT INTO {os.getenv('DB_PRODUCT_TABLE')} (product_id, product_name, cost_products, sale_price, quantity, suppliers, description_products, profit_margin, image_reference)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+    product_id = pwd_context.hash(product.product_name)
+    data_product = (
+        product_id,product.product_name, product.cost_products, product.sale_price, product.quantity, product.suppliers,
+        product.description_products, product.profit_margin, product.image_reference
+    )
+    product_result = query_db_insert(sql_product, data_product)
+    
+    return {"status": 200, "message": "Product created"}
+
+        
+@router_auth.delete(path="/delete_product/{product_id}/",
+    status_code=status.HTTP_200_OK,
+    tags=['Product'],
+    summary="""Delete a product."""
+)
+async def delete_product(product_id: str):
+    db_product = query_user_exists_products_id(product_id)
+    print(db_product)
+    if db_product["message"]:
+        raise HTTPException(status_code=400, detail="Product not found")
+
+    """ Delete a product from the products_ferroelectricos_yambitara table """
+    sql_product = f"DELETE FROM {os.getenv('DB_PRODUCT_TABLE')} WHERE product_id = %s;"
+    data_product = (product_id,)
+    result = query_db_delete(sql_product, data_product)
+    
+    if result:
+        return {"status": 200, "message": "Product deleted"}
+    else:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+@router_auth.get(path="/get_products/",
+    status_code=status.HTTP_200_OK,
+    tags=['Product'],
+    summary="""Get all products."""
+)
+async def get_products():
+    sql = f"SELECT * FROM {os.getenv('DB_PRODUCT_TABLE')};"
+    products = query_db(sql)
+    return {"status": 200, "data": products}
 
 
 #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*

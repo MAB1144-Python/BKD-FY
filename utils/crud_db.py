@@ -1,8 +1,11 @@
+from fastapi import APIRouter,FastAPI, Depends, HTTPException, status
 from utils.crud import get_user_by_username, create_user, query_db_insert
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from utils.config import load_config
 import psycopg2
+import os
+import pandas as pd
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -23,7 +26,9 @@ def query_user_exists_email(email: str):
         with psycopg2.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (email,))
-                exists = cur.fetchone() is not None
+                result = cur.fetchall()
+                df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
+                exists = not df.empty
             # commit the changes to the database
             conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
@@ -38,13 +43,65 @@ def query_user_exists(document: str):
         with psycopg2.connect(**config) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (document,))
-                exists = cur.fetchone() is not None
+                result = cur.fetchall()
+                df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
+                exists = not df.empty
             # commit the changes to the database
             conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         print("presento el error ",error)
     return {"message":exists}
 
+def query_user_exists_supplier(supplier_nit: str):
+    sql = f"SELECT * FROM {os.getenv('DB_SUPPLIER_TABLE')} WHERE supplier_nit = %s"
+    exists = False
+    try:
+        config = load_config()
+        with psycopg2.connect(**config) as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (supplier_nit,))
+                result = cur.fetchall()
+                df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
+                exists = not df.empty
+            # commit the changes to the database
+            conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("presento el error ",error)
+    return {"message":exists}
+
+def query_user_exists_products(product_name: str):
+    sql = f"SELECT * FROM {os.getenv('DB_PRODUCT_TABLE')} WHERE product_name = %s"
+    exists = False
+    try:
+        config = load_config()
+        with psycopg2.connect(**config) as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (product_name,))
+                result = cur.fetchall()
+                df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
+                exists = not df.empty
+            # commit the changes to the database
+            conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("presento el error ",error)
+    return {"message":exists}
+
+def query_user_exists_products_id(product_id: str):
+    sql = f"SELECT * FROM {os.getenv('DB_PRODUCT_TABLE')} WHERE product_id = %s"
+    exists = False
+    try:
+        config = load_config()
+        with psycopg2.connect(**config) as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (product_id,))
+                result = cur.fetchall()
+                df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
+                exists = df.empty
+            # commit the changes to the database
+            conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("presento el error ",error)
+    return {"message":exists}
 
 def query_db_insert(sql_query, data):
     vendor_id = None
@@ -74,3 +131,18 @@ def get_all_users():
     except (Exception, psycopg2.DatabaseError) as error:
         print("Error: ", error)
     return users
+
+
+
+
+
+def query_db(query: str):
+    try:
+        config = load_config()
+        with psycopg2.connect(**config) as conn:
+            with conn.cursor() as cur:
+                cur.execute(query)
+                result = cur.fetchall()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
