@@ -5,6 +5,8 @@ FROM postgres:latest
 ENV POSTGRES_USER=myuser
 ENV POSTGRES_PASSWORD=mypassword
 ENV POSTGRES_DB=mydatabase
+# Exponer el puerto 5430
+EXPOSE 5432
 
 # Copia el archivo SQL en el directorio de inicialización de PostgreSQL
 COPY init.sql /docker-entrypoint-initdb.d/
