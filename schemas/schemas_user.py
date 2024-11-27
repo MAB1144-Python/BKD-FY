@@ -91,25 +91,28 @@ class SupplierCreate(BaseModel):
             }
         }
 
-class ProductCreate(BaseModel):
-    product_name: str = Field(..., description="Product Name", max_length=100)
-    cost_products: str = Field(..., description="Cost of products", example="100.00")
-    sale_price: str = Field(..., description="Sale price", example="150.00")
-    quantity: int = Field(..., description="Quantity", example=10)
-    suppliers: str = Field(..., description="Suppliers", max_length=100, example="Supplier Name")
-    description_products: str = Field(None, description="Description of products", example="A detailed description")
-    profit_margin: str = Field(..., description="Profit margin", example="50.00")
-    image_reference: str = Field(None, description="Image reference", example="image_url")
-    class Config:
-        schema_extra = {
-            "example": {
-                "product_name": "Product Name",
-                "cost_products": 100.00,
-                "sale_price": 150.00,
-                "quantity": 10,
-                "suppliers": "Supplier Name",
-                "description_products": "A detailed description",
-                "profit_margin": 50.00,
-                "image_reference": "image_url",
-            }
-        }
+# class Distributor_register(BaseModel):
+#     distributor_name: str = Field(..., min_length=1, max_length=255, description="Distributor name")
+#     distributor_nit: str = Field(..., min_length=1, max_length=50, description="Distributor NIT")
+#     contact_name: str = Field(..., min_length=1, max_length=255, description="Contact name")
+#     contact_phone: str = Field(..., min_length=1, max_length=50, description="Contact phone")
+#     contact_email: EmailStr = Field(..., description="Contact email")
+#     contact_name_accounting: str = Field(..., min_length=1, max_length=255, description="Accounting contact name")
+#     contact_phone_accounting: str = Field(..., min_length=1, max_length=50, description="Accounting contact phone")
+#     contact_email_accounting: EmailStr = Field(..., description="Accounting contact email")
+#     city_address: str = Field(..., min_length=1, max_length=255, description="City address")
+#     class Config:
+#         schema_extra: str = {
+#             "example": {
+#                 "distributor_id": "123456",
+#                 "distributor_name": "Distributor Name",
+#                 "distributor_nit": "123456789",
+#                 "contact_name": "Contact Name",
+#                 "contact_phone": "1234567890",
+#                 "contact_email": "contact@example.com",
+#                 "contact_name_accounting": "Accounting Contact Name",
+#                 "contact_phone_accounting": "0987654321",
+#                 "contact_email_accounting": "accounting@example.com",
+#                 "city_address": "City Address"
+#             }
+#         }

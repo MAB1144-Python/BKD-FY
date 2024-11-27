@@ -3,7 +3,8 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from schemas.schemas_user import UserCreate, User, SupplierCreate, ProductCreate
+from schemas.schemas_user import *
+from schemas.schemas_facturacion import *
 from utils.crud import *
 from utils.crud_db import *
 
@@ -116,8 +117,56 @@ async def create_product(product: ProductCreate):
     product_result = query_db_insert(sql_product, data_product)
     
     return {"status": 200, "message": "Product created"}
-
         
+@router_auth.put(path="/update_product/{product_id}/",
+    status_code=status.HTTP_200_OK,
+    tags=['Product'],
+    summary="""Update an existing product."""
+)
+async def update_product(product: ProductUpdate):
+    db_product = query_user_exists_products_id(product.product_id)
+    if db_product["message"]:
+        raise HTTPException(status_code=400, detail="Product not found")
+    
+    """ Update an existing product in the products_ferroelectricos_yambitara table """
+    sql_product = f"""UPDATE {os.getenv('DB_PRODUCT_TABLE')} 
+                      SET product_name = %s, cost_products = %s, sale_price = %s, quantity = %s, suppliers = %s, 
+                          description_products = %s, profit_margin = %s, image_reference = %s
+                      WHERE product_id = %s;"""
+    data_product = (
+        product.product_name, product.cost_products, product.sale_price, product.quantity, product.suppliers,
+        product.description_products, product.profit_margin, product.image_reference, product.product_id
+    )
+    result = query_db_update(sql_product, data_product)
+    
+    if result:
+        return {"status": 200, "message": "Product updated"}
+    else:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+@router_auth.put(path="/update_product_quantity/{product_id}/",
+    status_code=status.HTTP_200_OK,
+    tags=['Product'],
+    summary="""Update the quantity of an existing product."""
+)
+async def update_product_quantity(product_id: str, quantity: int):
+    db_product = query_user_exists_products_id(product_id)
+    if db_product["message"]:
+        raise HTTPException(status_code=400, detail="Product not found")
+    
+    """ Update the quantity of an existing product in the products_ferroelectricos_yambitara table """
+    sql_product = f"""UPDATE {os.getenv('DB_PRODUCT_TABLE')} 
+                        SET quantity = %s
+                        WHERE product_id = %s;"""
+    data_product = (quantity, product_id)
+    result = query_db_update(sql_product, data_product)
+    
+    if result:
+        return {"status": 200, "message": "Product quantity updated"}
+    else:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+
 @router_auth.delete(path="/delete_product/{product_id}/",
     status_code=status.HTTP_200_OK,
     tags=['Product'],
