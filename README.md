@@ -53,6 +53,8 @@ https://www.deadbear.io/simple-serverless-fastapi-with-aws-lambda/
 git remote show origin
 git reset HEAD^ --soft
 
+git checkout main
+git pull origin main 
 
 docker images
 docker PS
