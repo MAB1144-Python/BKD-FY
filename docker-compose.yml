@@ -28,19 +28,19 @@ services:
   #     - ${PWD}/sql_versions:/flyway/sql
   #   command: -connectRetries=60 migrate
     
-  # app:
-  #   container_name: Backend_Ferroelectricos_Yambitara_test
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.dev  # Usar Dockerfile para desarrollo
-  #   #environment:
-  #   #  DATABASE_URL: "postgresql://myuser:mypassword@db:5432/mydatabase"  # Cadena de conexión a PostgreSQL
-  #   ports:
-  #     - "8220:8220"
-  #   depends_on:
-  #      - db  # Asegúrate de que la base de datos esté disponible
-  #   networks:
-  #     - mynetwork
+  app:
+    container_name: Backend_Ferroelectricos_Yambitara_test
+    build:
+      context: .
+      dockerfile: Dockerfile.dev  # Usar Dockerfile para desarrollo
+    #environment:
+    #  DATABASE_URL: "postgresql://myuser:mypassword@db:5432/mydatabase"  # Cadena de conexión a PostgreSQL
+    ports:
+      - "8220:8220"
+    depends_on:
+       - db  # Asegúrate de que la base de datos esté disponible
+    networks:
+      - mynetwork
 
 networks:
   mynetwork:
