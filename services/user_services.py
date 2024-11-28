@@ -33,11 +33,6 @@ ATTRIBUTE_IS_VERIFIED_TABLE_USERS='is_verified'
 ATTRIBUTE_EMAIL_TABLE_USER="email"
 
 
-JWT_SECRET_TOKEN_EMAIL = os.getenv("SECRET_KEY_EMAIL")
-JWT_ALGORITHM_TOKEN_EMAIL= os.getenv("ALGORITHM_CIPER_EMAIL")
-JWT_EXPIRATION_TIME_MINUTES_TOKEN_EMAIL= os.getenv("JWT_EXPIRATION_TIME_MINUTES_TOKEN_EMAIL_TIME")
-
-
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl="/auth/login",
     scheme_name="JWT"
@@ -142,15 +137,15 @@ def verify_id(id:str):
     
 
 
-def get_users():
-    try:
-        response = table.scan(
-            AttributesToGet = ["username","created_at", "cellphone","first_name", "last_name", "email", "user_id", "born_date"]
-        )
-        return response["Items"]
+# def get_users():
+#     try:
+#         response = table.scan(
+#             AttributesToGet = ["username","created_at", "cellphone","first_name", "last_name", "email", "user_id", "born_date"]
+#         )
+#         return response["Items"]
 
-    except ClientError as e:
-        return JSONResponse(content=e.response["Error"], status_code=500)
+#     except ClientError as e:
+#         return JSONResponse(content=e.response["Error"], status_code=500)
 
 
 

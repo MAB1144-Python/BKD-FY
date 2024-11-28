@@ -1,62 +1,93 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
-#from models import Factura, Producto, Cliente
-#from schemas.schemas_facturacion import FacturaCreate, FacturaResponse, Factura, Producto, Cliente
-from utils.connect import connect_db
-db = connect_db()
+from schemas.schemas_user import *
+from utils.crud import get_user_by_username, create_user, query_db_insert
+from utils.config import load_config
+from utils.crud_db import *
+import psycopg2
+from fastapi import APIRouter,FastAPI, Depends, HTTPException, status
+from passlib.context import CryptContext
 
+from services.authentic import authenticate
+from schemas.schemas_facturacion import *
+
+from utils.connect import connect_db
+import os
+import pandas as pd
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 router_factura = APIRouter()
 
-# db=get_db()
+@router_factura.post("/bill/", 
+    status_code=status.HTTP_200_OK,
+    tags=['Bill'],
+    # response_model=FacturaResponse
+    summary="""Register bill.""")
+async def create_factura(factura: FacturaCreate):
+    df = pd.DataFrame([], columns=[
+        "sale_id",
+        "id_sale_dian",
+        "user_id",
+        "seller_id",
+        "product_id", 
+        "product_name", 
+        "quantity_product", 
+        "cost_product",
+        "profit_product",
+        "discount_product", 
+        "sale_product"
+    ])
+    print(datetime.now())
+    sale_id = pwd_context.hash(factura.user_id + factura.seller_id + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    
+    id_sale_dian = pwd_context.hash("id_sale_dian_test"+ datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    for producto in factura.productos:
+        cost_product = 0
+        profit_product = 0
+        new_row = {
+            "sale_id": sale_id,
+            "id_sale_dian": id_sale_dian,
+            "user_id": factura.user_id,
+            "seller_id": factura.seller_id,
+            "product_id": producto["product_id"],
+            "product_name": producto["product_name"],
+            "quantity_product": producto["quantity_product"],
+            "cost_product": cost_product,
+            "profit_product": profit_product,
+            "discount_product": producto["discount_product"],
+            "sale_product": producto["sale_product"]
+        }
+        df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+    
+    for index, row in df.iterrows():
+        db_product = query_product_exists(row["product_id"]) 
+        if db_product["message"]:
+            raise HTTPException(status_code=400, detail="Product does not exist")
+        if row["product_name"] != db_product["product_name"]:
+            raise HTTPException(status_code=400, detail="Product name does not match")
+        # if row["quantity_product"] > db_product["quantity"]:
+        #     raise HTTPException(status_code=400, detail="Insufficient stock")
+        
+        sql = """INSERT INTO productos_facturacion (sale_id, id_sale_dian, user_id, seller_id, product_id, product_name, quantity_product, cost_product, profit_product, discount_product, sale_product)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        data = (
+            row["sale_id"], row["id_sale_dian"], row["user_id"], row["seller_id"], row["product_id"], row["product_name"],
+            row["quantity_product"], row["cost_product"], row["profit_product"], row["discount_product"], row["sale_product"]
+        )
+        user_id = query_db_insert(sql, data)
+    raise HTTPException(status_code=200, detail="Bill register")   
 
-# @router_factura.get("/consulta_db")
-# def consulta_db(db: Session = Depends(get_db)):
-#     try:
-#         result = db.execute(text("SELECT 1")).fetchone()
-#         return {"resultado": result[0]}
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
 
-
-# @router_factura.post("/facturas/", response_model=FacturaResponse)
-# def create_factura(factura: FacturaCreate, db: Session = Depends(get_db)):
-#     return {"mensaje":"ok"}
-#     db_factura = Factura(cliente_id=factura.cliente_id, total=factura.total)
-#     db.add(db_factura)
-#     db.commit()
-#     db.refresh(db_factura)
-#     for producto_id in factura.productos:
-#         producto = db.query(Producto).filter(Producto.id == producto_id).first()
-#         if not producto:
-#             raise HTTPException(status_code=404, detail="Producto no encontrado")
-#         db_factura.productos.append(producto)
-#     db.commit()
-#     return db_factura
-
-# @router_factura.get("/facturas/{factura_id}", response_model=FacturaResponse)
-# def read_factura(factura_id: int, db: Session = Depends(get_db)):
-#     return {"mensaje":"ok"}
-#     factura = db.query(Factura).filter(Factura.id == factura_id).first()
-#     if factura is None:
-#         raise HTTPException(status_code=404, detail="Factura no encontrada")
-#     return factura
-
-# @router_factura.get("/facturas/", response_model=list[FacturaResponse])
-# def read_facturas(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-#     return {"mensaje":"ok"}
-#     facturas = db.query(Factura).offset(skip).limit(limit).all()
-#     return facturas
-
-# @router_factura.delete("/facturas/{factura_id}", response_model=FacturaResponse)
-# def delete_factura(factura_id: int, db: Session = Depends(get_db)):
-#     return {"mensaje":"ok"}
-#     factura = db.query(Factura).filter(Factura.id == factura_id).first()
-#     if factura is None:
-#         raise HTTPException(status_code=404, detail="Factura no encontrada")
-#     db.delete(factura)
-#     db.commit()
-#     return factura
-
-
+@router_factura.get("/bills_registered/", 
+    status_code=status.HTTP_200_OK,
+    tags=['Bill'],
+    summary="""Get all bills.""")
+async def get_all_bills():
+    sql = f"SELECT * FROM {os.getenv('DB_SALE_TABLE')};"
+    print(sql)
+    bills = query_db(sql)
+    if not bills:
+        raise HTTPException(status_code=404, detail="No bills found")
+    return bills

@@ -2,20 +2,34 @@ version: '3.8'
 
 services:
   db:
-    container_name: postgres_db_Ferroelectricos_Yambitara
+    container_name: postgres_db_Ferroelectricos_Yambitara_test
     build:
       context: .
       dockerfile: Dockerfile.db  # Usar Dockerfile para la base de datos
     ports:
       - "5432:5432"
     volumes:
-      - db_volumes_Ferroelectricos_Yambitara:/var/lib/postgresql/data  # Persistencia de datos
+      - db_volumes_Ferroelectricos_Yambitara_test:/var/lib/postgresql/data  # Persistencia de datos
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # Copia init.sql en el contenedor
     networks:
       - mynetwork
 
+
+  # flyway:
+  #   image: flyway/flyway
+  #   depends_on:
+  #     - db
+      
+  #   environment:
+  #     - FLYWAY_URL=jdbc:postgresql://postgres:5432/mydatabase
+  #     - FLYWAY_USER=myuser
+  #     - FLYWAY_PASSWORD=mypassword
+  #   volumes:
+  #     - ${PWD}/sql_versions:/flyway/sql
+  #   command: -connectRetries=60 migrate
+    
   app:
-    container_name: Backend_Ferroelectricos_Yambitara
+    container_name: Backend_Ferroelectricos_Yambitara_test
     build:
       context: .
       dockerfile: Dockerfile.dev  # Usar Dockerfile para desarrollo
@@ -33,4 +47,4 @@ networks:
     driver: bridge
 
 volumes:
-  db_volumes_Ferroelectricos_Yambitara:
+  db_volumes_Ferroelectricos_Yambitara_test:

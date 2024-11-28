@@ -53,6 +53,8 @@ https://www.deadbear.io/simple-serverless-fastapi-with-aws-lambda/
 git remote show origin
 git reset HEAD^ --soft
 
+git checkout main
+git pull origin main 
 
 docker images
 docker PS
@@ -84,4 +86,6 @@ volumen especifico
 ## docker stop -t 0 Backend_Ferroelectricos_Yambitara
 ## docker rm -f postgres_db_Ferroelectricos_Yambitara
 ## docker rm -f Backend_Ferroelectricos_Yambitara
-## docker volume rm bkd-fy_db_volumes_Ferroelectricos_Yambitara
+## docker rmi bkd-fy-app
+## docker rmi bkd-fy-db
+## docker volume rm db_volumes_Ferroelectricos_Yambitara

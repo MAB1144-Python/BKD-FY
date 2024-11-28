@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS users_ferroelectricos_yambitara (
     name VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    type_user VARCHAR(50) NOT NULL,
     type_document VARCHAR(50) NOT NULL,
     contact_user VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -35,10 +36,11 @@ CREATE TABLE IF NOT EXISTS user_types_ferroelectricos_yambitara (
 
 -- Crear una tabla para registrar los detalles de los productos
 CREATE TABLE IF NOT EXISTS products_ferroelectricos_yambitara (
-    product_id SERIAL NOT NULL PRIMARY KEY,
+    product_id  VARCHAR(255) NOT NULL UNIQUE PRIMARY KEY,
+    product_name VARCHAR(100) NOT NULL,
     cost_products DECIMAL(15, 2) NOT NULL,
     sale_price DECIMAL(15, 2) NOT NULL,
-    quantity INT NOT NULL,
+    quantity DECIMAL(15, 2) NOT NULL,
     suppliers VARCHAR(100) NOT NULL,
     description_products TEXT,
     profit_margin DECIMAL(5, 2) NOT NULL,
@@ -48,30 +50,65 @@ CREATE TABLE IF NOT EXISTS products_ferroelectricos_yambitara (
 
 -- Crear una tabla para los proveedores
 CREATE TABLE IF NOT EXISTS suppliers_ferroelectricos_yambitara (
-    supplier_nit VARCHAR(50) NOT NULL UNIQUE PRIMARY KEY,
+    supplier_id VARCHAR(255) NOT NULL UNIQUE PRIMARY KEY,
+    supplier_nit VARCHAR(50) NOT NULL UNIQUE,
     supplier_name VARCHAR(100) NOT NULL,
-    contact_name VARCHAR(100),
-    contact_email VARCHAR(100),
-    contact_contable VARCHAR(100),
-    phone VARCHAR(20),
-    phone_two VARCHAR(20),
-    address TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    supplier_contact_name VARCHAR(100),
+    supplier_contact_email VARCHAR(100),
+    supplier_contact_contable VARCHAR(100),
+    supplier_phone VARCHAR(20),
+    supplier_phone_two VARCHAR(20),
+    supplier_address TEXT,
+    supplier_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Crear una tabla para registrar las ventas
 CREATE TABLE IF NOT EXISTS sales_ferroelectricos_yambitara (
-    sale_id SERIAL NOT NULL PRIMARY KEY,
+    sale_id VARCHAR(255) PRIMARY KEY,
     id_sale_dian VARCHAR(50) NOT NULL,
-    seller_id VARCHAR(50) NOT NULL,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL,
-    cost_sale DECIMAL(15, 2) NOT NULL,
-    profit_sale DECIMAL(15, 2) NOT NULL,
-    total DECIMAL(15, 2) NOT NULL,
-    sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     user_id VARCHAR(255) NOT NULL,
+    seller_id VARCHAR(50) NOT NULL,
+    product_id VARCHAR(255) NOT NULL,
+    product_name VARCHAR(100) NOT NULL,
+    quantity_product INT NOT NULL,
+    cost_product DECIMAL(15, 2) NOT NULL,
+    profit_product DECIMAL(15, 2) NOT NULL,
+    discount_product DECIMAL(15, 2) NOT NULL,
+    sale_product DECIMAL(15, 2) NOT NULL,
+    sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users_ferroelectricos_yambitara(user_id),
     FOREIGN KEY (product_id) REFERENCES products_ferroelectricos_yambitara(product_id)
 );
+
+-- Insertar registros de ejemplo en la tabla 'users_ferroelectricos_yambitara'
+INSERT INTO users_ferroelectricos_yambitara (user_id, document, name, email, password, type_user, type_document, contact_user)
+VALUES 
+('1', '123456789', 'John Doe', 'john.doe@example.com', 'password123', 'admin', 'ID', '123-456-7890'),
+('2', '987654321', 'Jane Smith', 'jane.smith@example.com', 'password456', 'user', 'ID', '098-765-4321');
+
+-- Insertar registros de ejemplo en la tabla 'user_types_ferroelectricos_yambitara'
+INSERT INTO user_types_ferroelectricos_yambitara (document, type_name, description)
+VALUES 
+('123456789', 'admin', 'Administrator with full access'),
+('987654321', 'user', 'Regular user with limited access');
+
+-- Insertar registros de ejemplo en la tabla 'products_ferroelectricos_yambitara'
+INSERT INTO products_ferroelectricos_yambitara (product_id, product_name, cost_products, sale_price, quantity, suppliers, description_products, profit_margin, image_reference)
+VALUES 
+('p1', 'Product A', 10.00, 15.00, 100, 'Supplier A', 'Description of Product A', 5.00, 'imageA.jpg'),
+('p10', 'Product J', 100.00, 150.00, 1000, 'Supplier J', 'Description of Product J', 50.00, 'imageJ.jpg'),
+('p9', 'Product I', 90.00, 135.00, 900, 'Supplier I', 'Description of Product I', 45.00, 'imageI.jpg'),
+('p8', 'Product H', 80.00, 120.00, 800, 'Supplier H', 'Description of Product H', 40.00, 'imageH.jpg'),
+('p7', 'Product G', 70.00, 105.00, 700, 'Supplier G', 'Description of Product G', 35.00, 'imageG.jpg'),
+('p6', 'Product F', 60.00, 90.00, 600, 'Supplier F', 'Description of Product F', 30.00, 'imageF.jpg'),
+('p5', 'Product E', 50.00, 75.00, 500, 'Supplier E', 'Description of Product E', 25.00, 'imageE.jpg'),
+('p4', 'Product D', 40.00, 60.00, 400, 'Supplier D', 'Description of Product D', 20.00, 'imageD.jpg'),
+('p3', 'Product C', 30.00, 45.00, 300, 'Supplier C', 'Description of Product C', 15.00, 'imageC.jpg'),
+('p2', 'Product B', 20.00, 30.00, 200, 'Supplier B', 'Description of Product B', 10.00, 'imageB.jpg');
+
+-- Insertar registros de ejemplo en la tabla 'suppliers_ferroelectricos_yambitara'
+INSERT INTO suppliers_ferroelectricos_yambitara (supplier_id, supplier_nit, supplier_name, supplier_contact_name, supplier_contact_email, supplier_contact_contable, supplier_phone, supplier_phone_two, supplier_address)
+VALUES 
+('1', '111111111', 'Supplier A', 'Contact A', 'contactA@example.com', 'contableA@example.com', '111-111-1111', '222-222-2222', 'Address A'),
+('2', '222222222', 'Supplier B', 'Contact B', 'contactB@example.com', 'contableB@example.com', '333-333-3333', '444-444-4444', 'Address B');
 
