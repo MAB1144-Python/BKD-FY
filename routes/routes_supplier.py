@@ -39,15 +39,14 @@ async def create_supplier(supplier: SupplierCreate):
     tags=['Supplier'],
     summary="""Update an existing supplier."""
 )
-async def update_supplier(supplier_nit: str, supplier: SupplierCreate):
+async def update_supplier(supplier: SupplierCreate):
     db_user = query_user_exists_supplier(supplier.supplier_nit)
     if not db_user["message"]:
         raise HTTPException(status_code=404, detail="Supplier not found")
     
     """ Retrieve supplier_id from suppliers_ferroelectricos_yambitara table by supplier_nit """
     sql_supplier = """SELECT supplier_id FROM suppliers_ferroelectricos_yambitara WHERE supplier_nit = %s;"""
-    supplier_id = query_db_fetchone(sql_supplier, (supplier_nit,))
-    print(supplier_id)
+    supplier_id = query_db_fetchone(sql_supplier, (supplier.supplier_nit,))
     if not supplier_id:
         raise HTTPException(status_code=404, detail="Supplier not found")
     
