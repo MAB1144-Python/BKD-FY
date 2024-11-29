@@ -49,25 +49,6 @@ def query_user_exists_document(document: str):
         raise HTTPException(status_code=400, detail="Error in the server")
     return {"message": exists}
 
-def query_user_exists(document: str):
-    sql = f"SELECT * FROM {os.getenv('DB_USER_TABLE')} WHERE document = %s"
-    exists = False
-    print("sql ",sql)
-    print("document ",document)
-    try:
-        config = load_config()
-        with psycopg2.connect(**config) as conn:
-            with conn.cursor() as cur:
-                cur.execute(sql, (document,))
-                result = cur.fetchall()
-                df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
-                exists = not df.empty
-            # commit the changes to the database
-            conn.commit()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print("presento el error ",error)
-    return {"message":exists}
-
 def query_product_exists(product_id: str):
     sql = f"SELECT product_name FROM {os.getenv('DB_PRODUCT_TABLE')} WHERE product_id = %s"
     product_name = None

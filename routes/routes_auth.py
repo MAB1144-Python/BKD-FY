@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from schemas.schemas_user import *
 from schemas.schemas_facturacion import *
-from utils.crud import *
 from utils.crud_db import *
 
 from services.authentic import authenticate
@@ -30,7 +29,7 @@ class Token(BaseModel):
     #response_model = UserCreate,
     summary="""Register usuario.""")
 async def register(user: UserCreate):
-    db_user = query_user_exists(user.document) 
+    db_user = query_user_exists_email(user.email) 
     if db_user["message"]:
         raise HTTPException(status_code=400, detail="email already registered")
     
