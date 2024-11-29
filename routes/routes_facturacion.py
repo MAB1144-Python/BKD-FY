@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from schemas.schemas_user import *
-from utils.crud import get_user_by_username, create_user, query_db_insert
+from utils.crud import get_user_by_username, create_user
 from utils.config import load_config
 from utils.crud_db import *
 import psycopg2

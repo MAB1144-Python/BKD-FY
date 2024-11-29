@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from fastapi import APIRouter,FastAPI, Depends, HTTPException, status
 from schemas.schemas_user import User, UserCreate
 from passlib.context import CryptContext
 import psycopg2
@@ -47,17 +48,6 @@ def get_all_users():
         print("Error: ", error)
     return users
 
-def query_db_insert(sql_query, data):
-    try:
-        config = load_config()
-        with  psycopg2.connect(**config) as conn:
-            with  conn.cursor() as cur:
-                # execute the INSERT statement
-                cur.execute(sql_query, (data,))
-                conn.commit()
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    return{"message":"Creado con exito"}
 
 
 def query_db_delete(sql_query, data):

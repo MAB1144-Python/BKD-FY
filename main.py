@@ -1,12 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.routes_facturacion import  router_factura
-from routes.rotes_auth import router_auth
+from routes.routes_auth import router_auth
+from routes.routes_product import router_product
+from routes.routes_supplier import router_supplier
+from routes.routes_user import router_user
 
 app = FastAPI()
 
-app.include_router(router_factura)
 app.include_router(router_auth)
+app.include_router(router_user)
+app.include_router(router_product)
+app.include_router(router_supplier)
+app.include_router(router_factura)
 
 origins = [
     #local v1
