@@ -1,21 +1,21 @@
-# from sqlalchemy import create_engine
-# from sqlalchemy.ext.declarative import declarative_base
-# from sqlalchemy.orm import sessionmaker
-# import psycopg2
-# from psycopg2 import sql
-# import time
-# import random
-# from sqlalchemy import create_engine
-# from schemas.schemas_user import User
-# from sqlalchemy.orm import Session
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import psycopg2
+from psycopg2 import sql
+import time
+import random
+from sqlalchemy import create_engine
+from schemas.schemas_user import User
+from sqlalchemy.orm import Session
 
 
 
-# db_name = 'postgres'
-# db_user = 'user'
-# db_pass = 'Mab880821'
-# db_host = '127.0.0.1'
-# db_port = '5432'
+db_name = 'postgres'
+db_user = 'user'
+db_pass = 'Mab880821'
+db_host = '127.0.0.1'
+db_port = '5432'
 
 # def create_database():
 #     conn = psycopg2.connect(
@@ -55,24 +55,24 @@
 
 
 
-# # Replace 'DATABASE_URL' with your actual database URL
-# DATABASE_URL = "postgresql://myuser:mypassword@localhost:5432/mydatabase"
-# #DATABASE_URL = "sqlite:///./test.db"
+# Replace 'DATABASE_URL' with your actual database URL
+DATABASE_URL = "postgresql://myuser:mypassword@localhost:5432/mydatabase"
+#DATABASE_URL = "sqlite:///./test.db"
 
-# engine = create_engine(DATABASE_URL)
-# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-# Base = declarative_base()
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
 
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
-# # Dependency to get DB session
-# def get_db():
-#     db = SessionLocal()
-#     try:
-#         yield db
-#     finally:
-#         db.close()
-#     return db
+# Dependency to get DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+    return db
 
-# def get_user_by_username(db: Session, username: str):
-#     return db.query(User).filter(User.username == username).first()
+def get_user_by_username(db: Session, username: str):
+    return db.query(User).filter(User.username == username).first()
