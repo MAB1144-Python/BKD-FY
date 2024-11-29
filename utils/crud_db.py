@@ -137,7 +137,36 @@ def query_db_insert(sql_query, data):
         print("error db",error)
         raise HTTPException(status_code=400, detail="Error in the server")
     return{"message":"Creado con exito"}
-     
+
+def query_db_fetchone(sql_query: str, data: tuple):
+    try:
+        config = load_config()
+        with  psycopg2.connect(**config) as conn:
+            with  conn.cursor() as cur:
+                # execute the INSERT statement
+                cur.execute(sql_query, data,)
+                result = cur.fetchone()
+                conn.commit()
+                return {"message":result}
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("error db",error)
+        raise HTTPException(status_code=400, detail="Error in the server")
+
+def query_db_fetchall(query: str):
+    try:
+        config = load_config()
+        with  psycopg2.connect(**config) as conn:
+            with  conn.cursor() as cur:
+                # execute the INSERT statement
+                cur.execute(query)
+                result = cur.fetchall()
+                conn.commit()
+                return {"message":result}
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("error db",error)
+        raise HTTPException(status_code=400, detail="Error in the server")
+
+  
 def query_db_update(sql_query, data):
     print("sql_query ",sql_query)
     print("data ",data)
