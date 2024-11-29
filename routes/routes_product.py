@@ -6,6 +6,7 @@ from passlib.context import CryptContext
 from schemas.schemas_user import *
 from schemas.schemas_facturacion import *
 from utils.crud_db import *
+from utils.crud_product import *
 
 from services.authentic import authenticate
 
@@ -105,6 +106,7 @@ async def delete_product(product_id: str):
         return {"status": 200, "message": "Product deleted"}
     else:
         raise HTTPException(status_code=404, detail="Product not found")
+
 
 @router_product.get(path="/get_products/",
     status_code=status.HTTP_200_OK,

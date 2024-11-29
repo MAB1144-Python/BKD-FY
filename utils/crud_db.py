@@ -32,8 +32,6 @@ def query_user_exists_email(email: str):
 def query_user_exists_document(document: str):
     sql = f"SELECT * FROM {os.getenv('DB_USER_TABLE')} WHERE document = %s"
     exists = False
-    print("sql ", sql)
-    print("document ", document)
     try:
         config = load_config()
         with psycopg2.connect(**config) as conn:
@@ -117,6 +115,7 @@ def query_user_exists_products_id(product_id: str):
                 result = cur.fetchall()
                 print("result ",result)
                 df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
+                print("df ",df)
                 exists = df.empty
                 print("exists ",exists)
             # commit the changes to the database
