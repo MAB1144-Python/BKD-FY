@@ -30,9 +30,9 @@ class Token(BaseModel):
     #response_model = UserCreate,
     summary="""Register usuario.""")
 async def register(user: UserCreate):
-    # db_user = query_user_exists(user.document) 
-    # if db_user["message"]:
-    #     raise HTTPException(status_code=400, detail="email already registered")
+    db_user = query_user_exists(user.document) 
+    if db_user["message"]:
+        raise HTTPException(status_code=400, detail="email already registered")
     
     db_user = query_user_exists_document(user.document)
     if db_user["message"]:

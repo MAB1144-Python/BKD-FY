@@ -55,6 +55,7 @@ git reset HEAD^ --soft
 
 git checkout main
 git pull origin main 
+git rm --cached 'docker*'
 
 docker images
 docker PS
