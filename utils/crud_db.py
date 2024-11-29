@@ -145,6 +145,7 @@ def query_db_fetchone(sql_query: str, data: tuple):
                 # execute the INSERT statement
                 cur.execute(sql_query, data,)
                 result = cur.fetchone()
+                print("result ",result)
                 conn.commit()
                 return {"message":result}
     except (Exception, psycopg2.DatabaseError) as error:
@@ -155,10 +156,11 @@ def query_db_fetchall(query: str):
     try:
         config = load_config()
         with  psycopg2.connect(**config) as conn:
-            with  conn.cursor() as cur:
+            with  conn.cursor() as cur: 
                 # execute the INSERT statement
                 cur.execute(query)
                 result = cur.fetchall()
+                print("result ",result)
                 conn.commit()
                 return {"message":result}
     except (Exception, psycopg2.DatabaseError) as error:

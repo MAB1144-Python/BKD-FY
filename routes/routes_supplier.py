@@ -30,6 +30,7 @@ async def create_supplier(supplier: SupplierCreate):
         supplier.supplier_contact_email, supplier.supplier_contact_contable, supplier.supplier_phone,
         supplier.supplier_phone_two, supplier.supplier_address
     )
+    print("data_supplier ",data_supplier)
     supplier_id = query_db_insert(sql_supplier, data_supplier)
     
     return {"status": 200, "message": "Supplier created"}

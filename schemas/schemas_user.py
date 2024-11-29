@@ -82,12 +82,12 @@ class SupplierCreate(BaseModel):
             "example": {
                 "supplier_nit": "123456789",
                 "supplier_name": "Supplier Name",
-                "contact_name": "Contact Name",
-                "contact_email": "contact@example.com",
-                "contact_contable": "Contact Contable",
-                "phone": "1234567890",
-                "phone_two": "0987654321",
-                "address": "123 Supplier St.",
+                "supplier_contact_name": "Contact Name",
+                "supplier_contact_email": "contact@example.com",
+                "supplier_contact_contable": "Contact Contable",
+                "supplier_phone": "1234567890",
+                "supplier_phone_two": "0987654321",
+                "supplier_address": "123 Supplier St.",
             }
         }
 
