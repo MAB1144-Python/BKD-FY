@@ -58,7 +58,6 @@ async def register(user: UserCreate):
     summary="""Login usuario.""", response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     db_user = query_user_exists_email(form_data.username)
-    print(db_user)
     if not db_user["message"]:
         raise HTTPException(status_code=400, detail="Username not registered")
     token = authenticate(form_data.username, form_data.password)
@@ -92,14 +91,15 @@ async def get_users():
     status_code=status.HTTP_200_OK,
     tags=['Auth'],
     summary="""Get user by email.""")
-async def get_user_by_email(document: str):
-    db_user = query_user_exists_document(document)
+async def get_user_by_email(email: str):
+    db_user = query_user_exists_email(email)
+    print(db_user)
     if not db_user["message"]:
-        raise HTTPException(status_code=404, detail="User information not found")
+        raise HTTPException(status_code=400, detail="User not registered")
     """ Retrieve user information from the users_ferroelectricos_yambitara table """
     sql = """SELECT email, document, name, type_document, contact_user, type_user
-             FROM users_ferroelectricos_yambitara WHERE document = %s;"""
-    data = (document,)
+             FROM users_ferroelectricos_yambitara WHERE email = %s;"""
+    data = (email,)
     db_user = query_db_fetchone(sql, data)
     if not db_user:
         raise HTTPException(status_code=404, detail="User information not found")
