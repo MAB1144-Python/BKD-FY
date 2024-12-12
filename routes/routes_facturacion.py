@@ -59,23 +59,26 @@ async def create_factura(factura: FacturaCreate):
             "sale_product": producto["sale_product"]
         }
         df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-    
+    print(df)
     for index, row in df.iterrows():
-        db_product = query_product_exists(row["product_id"]) 
-        if db_product["message"]:
-            raise HTTPException(status_code=400, detail="Product does not exist")
-        if row["product_name"] != db_product["product_name"]:
-            raise HTTPException(status_code=400, detail="Product name does not match")
-        # if row["quantity_product"] > db_product["quantity"]:
-        #     raise HTTPException(status_code=400, detail="Insufficient stock")
+        row = row.to_dict()
+        print("row ",index)
+        db_product = query_product_exists_detail(row["product_id"]) 
+        print("db_product ", row["product_id"], db_product)
+        # if not db_product["message"]:
+        #     raise HTTPException(status_code=400, detail="Product does not exist")
+        # if row["product_name"] != db_product["product_name"]:
+        #     raise HTTPException(status_code=400, detail="Product name does not match")
+        if row["quantity_product"] > db_product["quantity"]:
+            raise HTTPException(status_code=400, detail="Insufficient stock")
         
-        sql = """INSERT INTO productos_facturacion (sale_id, id_sale_dian, user_id, seller_id, product_id, product_name, quantity_product, cost_product, profit_product, discount_product, sale_product)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
-        data = (
-            row["sale_id"], row["id_sale_dian"], row["user_id"], row["seller_id"], row["product_id"], row["product_name"],
-            row["quantity_product"], row["cost_product"], row["profit_product"], row["discount_product"], row["sale_product"]
-        )
-        user_id = query_db_insert(sql, data)
+        # sql = """INSERT INTO productos_facturacion (sale_id, id_sale_dian, user_id, seller_id, product_id, product_name, quantity_product, cost_product, profit_product, discount_product, sale_product)
+        #             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        # data = (
+        #     row["sale_id"], row["id_sale_dian"], row["user_id"], row["seller_id"], row["product_id"], row["product_name"],
+        #     row["quantity_product"], row["cost_product"], row["profit_product"], row["discount_product"], row["sale_product"]
+        # )
+        # user_id = query_db_insert(sql, data)
     raise HTTPException(status_code=200, detail="Bill register")   
 
 

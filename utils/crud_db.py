@@ -70,6 +70,29 @@ def query_product_exists(product_id: str):
         print("presento el error ", error)
     return {"message":exists,"product_name": product_name}
 
+def query_product_exists_detail(product_id: str):
+    sql = f"SELECT * FROM {os.getenv('DB_PRODUCT_TABLE')} WHERE product_id = %s"
+    product = None
+    exists = False
+    print("product_id ",product_id)
+    print("sql ",sql) 
+    try:
+        config = load_config()
+        with psycopg2.connect(**config) as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (product_id,))
+                result = cur.fetchall()
+                df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
+                exists = not df.empty
+                result = cur.fetchone()
+                if result:
+                    product = result[0]
+            # commit the changes to the database
+            conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("presento el error ", error)
+    return {"message":exists,"product_detail": product}
+
 def query_user_exists_supplier(supplier_nit: str):
     sql = f"SELECT * FROM {os.getenv('DB_SUPPLIER_TABLE')} WHERE supplier_nit = %s"
     exists = False
