@@ -29,6 +29,8 @@ class Token(BaseModel):
     #response_model = UserCreate,
     summary="""Register usuario.""")
 async def register(user: UserCreate):
+    hashed_password = pwd_context.hash(user.password)
+    print(hashed_password)
     db_user = query_user_exists_email(user.email) 
     if db_user["message"]:
         raise HTTPException(status_code=400, detail="email already registered")
@@ -86,6 +88,83 @@ async def get_users():
     users = get_all_users()
     return users
 
+@router_auth.post("/user_info/",
+    status_code=status.HTTP_200_OK,
+    tags=['Auth'],
+    summary="""Get user by email.""")
+async def get_user_by_email(document: str):
+    db_user = query_user_exists_document(document)
+    if not db_user["message"]:
+        raise HTTPException(status_code=404, detail="User information not found")
+    """ Retrieve user information from the users_ferroelectricos_yambitara table """
+    sql = """SELECT email, document, name, type_document, contact_user, type_user
+             FROM users_ferroelectricos_yambitara WHERE document = %s;"""
+    data = (document,)
+    db_user = query_db_fetchone(sql, data)
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User information not found")
+    return {
+        "email": db_user["message"][0],
+        "document": db_user["message"][1],
+        "name": db_user["message"][2],
+        "type_document": db_user["message"][3],
+        "contact_user": db_user["message"][4],
+        "type_user": db_user["message"][5],
+    }
 
+@router_auth.put("/update_user_info/",
+    status_code=status.HTTP_200_OK,
+    tags=['Auth'],
+    summary="""Update user information.""")
+async def update_user_info(user: UserUpdate):
+    db_user = query_user_exists_document(user.document)
+    if not db_user["message"]:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    """ Update user information in the users_ferroelectricos_yambitara table """
+    sql = """UPDATE users_ferroelectricos_yambitara 
+             SET email = %s, name = %s, type_document = %s, contact_user = %s
+             WHERE document = %s;"""
+    data = (user.email, user.name, user.type_document, user.contact_user, user.document)
+    
+    query_db_update(sql, data)
+    return {"detail": "User information updated successfully"}
+
+
+@router_auth.put("/update_user_type/",
+    status_code=status.HTTP_200_OK,
+    tags=['Auth'],
+    summary="""Update user type.""")
+async def update_user_type(document: str, new_type_user: str, admin_email: str, admin_password: str):
+    # Verify admin credentials
+    admin_user = query_user_is_admin(admin_email)
+    if not admin_user["message"]:
+        raise HTTPException(status_code=400, detail="Admin email not registered")
+    
+    token = authenticate(admin_email, admin_password)
+    if not token:
+        raise HTTPException(status_code=401, detail="Admin password incorrect")
+    
+    # Verify user existence
+    db_user = query_user_exists_document(document)
+    if not db_user["message"]:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Update user type
+    sql = """UPDATE users_ferroelectricos_yambitara 
+                SET type_user = %s
+                WHERE document = %s;"""
+    data = (new_type_user, document)
+    
+    query_db_update(sql, data)
+    return {"detail": "User type updated successfully"}
+    
+@router_auth.get("/user_types",
+    status_code=status.HTTP_200_OK,
+    tags=['Auth'],
+    summary="""Get user types.""")
+async def get_user_types():
+    user_types = ["admin", "user", "seller"]
+    return {"user_types": user_types}
 
 #/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*

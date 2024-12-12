@@ -11,7 +11,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def query_user_exists_email(email: str):
     sql = f"SELECT * FROM {os.getenv('DB_USER_TABLE')} WHERE email = %s"
-    print("sql ",sql,email)
     exists = False
     try:
         config = load_config()
@@ -20,7 +19,6 @@ def query_user_exists_email(email: str):
                 cur.execute(sql, (email,))
                 result = cur.fetchall()
                 df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
-                print("df ",df)
                 exists = not df.empty
             # commit the changes to the database
             conn.commit()
@@ -28,6 +26,28 @@ def query_user_exists_email(email: str):
         print("presento el error ",error)
         raise HTTPException(status_code=400, detail="Error in the server")
     return {"message":exists}
+
+def query_user_is_admin(admin_email: str):
+    sql = f"SELECT * FROM {os.getenv('DB_USER_TABLE')} WHERE email = %s"
+    exists = False
+    is_admin = False
+    try:
+        config = load_config()
+        with psycopg2.connect(**config) as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (admin_email,))
+                result = cur.fetchall()
+                df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
+                exists = not df.empty
+                if exists:
+                    user_type = df.iloc[0]['type_user']
+                    is_admin = user_type == 'admin'
+            # commit the changes to the database
+            conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("presento el error ", error)
+        raise HTTPException(status_code=400, detail="Error in the server")
+    return {"message": exists, "is_admin": is_admin}
 
 def query_user_exists_document(document: str):
     sql = f"SELECT * FROM {os.getenv('DB_USER_TABLE')} WHERE document = %s"
@@ -192,8 +212,6 @@ def query_db_fetchall(query: str):
 
   
 def query_db_update(sql_query, data):
-    print("sql_query ",sql_query)
-    print("data ",data)
     try:
         config = load_config()
         with  psycopg2.connect(**config) as conn:
@@ -202,7 +220,7 @@ def query_db_update(sql_query, data):
                 cur.execute(sql_query, data,)
                 conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
-        print("uptade product: ",error)
+        print("uptade info: ",error)
         raise HTTPException(status_code=400, detail="Update failed")
     return{"message":"Update success"}
 

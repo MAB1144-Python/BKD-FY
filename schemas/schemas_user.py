@@ -91,6 +91,23 @@ class SupplierCreate(BaseModel):
             }
         }
 
+class UserUpdate(BaseModel):
+    email: EmailStr = Field(None, description="User Contact Email")
+    name: str = Field(..., description="User Name", max_length=100)
+    type_document: str = Field(..., description="User Document", max_length=50)
+    document: str = Field(..., description="document", max_length=50)
+    contact_user: str = Field(..., description="contact user", max_length=100)
+    class Config:
+        schema_extra = {
+            "example": {
+                "email": "test@gmail.com",
+                "name": "your_name",
+                "type_document": "passport",
+                "document": "123456789",
+                "contact_user": "contact_name"
+            }
+        }
+
 # class Distributor_register(BaseModel):
 #     distributor_name: str = Field(..., min_length=1, max_length=255, description="Distributor name")
 #     distributor_nit: str = Field(..., min_length=1, max_length=50, description="Distributor NIT")
