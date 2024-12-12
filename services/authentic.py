@@ -32,7 +32,7 @@ class Settings(BaseSettings):
 settings = Settings()
 
 def authenticate(email: str, password: str) -> Optional[User]:
-    try:
+    #try:
         variable_get_user_by_email = get_item_by_email(email)
         print("variable_get_user_by_email", variable_get_user_by_email)
         if variable_get_user_by_email["message"]:
@@ -48,8 +48,8 @@ def authenticate(email: str, password: str) -> Optional[User]:
                     }
         else:
             raise HTTPException(status_code=502, detail="Usuario no encontrado")
-    except:
-        raise HTTPException(status_code=502, detail="Error en la autenticación")
+    # except:
+    #     raise HTTPException(status_code=502, detail="Error en la autenticación")
     
 
 
