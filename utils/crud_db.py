@@ -91,27 +91,28 @@ def query_product_exists(product_id: str):
     return {"message":exists,"product_name": product_name}
 
 def query_product_exists_detail(product_id: str):
-    sql = f"SELECT * FROM {os.getenv('DB_PRODUCT_TABLE')} WHERE product_id = %s"
+    sql = f"SELECT * FROM {os.getenv('DB_PRODUCT_TABLE')}"
     product = None
     exists = False
-    print("product_id ",product_id)
-    print("sql ",sql) 
     try:
         config = load_config()
         with psycopg2.connect(**config) as conn:
             with conn.cursor() as cur:
-                cur.execute(sql, (product_id,))
+                cur.execute(sql)
                 result = cur.fetchall()
                 df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
+                filter = df[df['product_id'] == product_id]
                 exists = not df.empty
                 result = cur.fetchone()
                 if result:
                     product = result[0]
+                product = df[df['product_id'] == product_id].to_dict(orient='records')
+                return {"message":exists,"product_detail": product[0]}
             # commit the changes to the database
             conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         print("presento el error ", error)
-    return {"message":exists,"product_detail": product}
+        return {"message":exists}
 
 def query_user_exists_supplier(supplier_nit: str):
     sql = f"SELECT * FROM {os.getenv('DB_SUPPLIER_TABLE')} WHERE supplier_nit = %s"
@@ -168,6 +169,8 @@ def query_user_exists_products_id(product_id: str):
     return {"message":exists}
 
 def query_db_insert(sql_query, data):
+    print("sql_query ",sql_query)
+    print("data ",data) 
     try:
         config = load_config()
         with  psycopg2.connect(**config) as conn:
@@ -233,6 +236,7 @@ def get_all_users():
             with conn.cursor() as cur:
                 cur.execute(sql)
                 users = cur.fetchall()
+            print("userssssssss",users)
     except (Exception, psycopg2.DatabaseError) as error:
         print("Error: ", error)
     return users

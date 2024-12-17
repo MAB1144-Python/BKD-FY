@@ -48,8 +48,6 @@ async def create_factura(factura: FacturaCreate):
         new_row = {
             "sale_id": sale_id,
             "id_sale_dian": id_sale_dian,
-            "user_id": factura.user_id,
-            "seller_id": factura.seller_id,
             "product_id": producto["product_id"],
             "product_name": producto["product_name"],
             "quantity_product": producto["quantity_product"],
@@ -59,28 +57,51 @@ async def create_factura(factura: FacturaCreate):
             "sale_product": producto["sale_product"]
         }
         df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-    print(df)
+    
     for index, row in df.iterrows():
-        row = row.to_dict()
-        print("row ",index)
-        db_product = query_product_exists_detail(row["product_id"]) 
-        print("db_product ", row["product_id"], db_product)
-        # if not db_product["message"]:
-        #     raise HTTPException(status_code=400, detail="Product does not exist")
-        # if row["product_name"] != db_product["product_name"]:
+        data_sale_product = row.to_dict()
+        db_product = query_product_exists_detail(data_sale_product["product_id"]) 
+        if not db_product["message"]:
+            raise HTTPException(status_code=400, detail="Product does not exist")
+        # if data_sale_product["product_name"] != db_product["product_name"]:
         #     raise HTTPException(status_code=400, detail="Product name does not match")
-        if row["quantity_product"] > db_product["quantity"]:
-            raise HTTPException(status_code=400, detail="Insufficient stock")
+        if data_sale_product["quantity_product"] > db_product['product_detail']["quantity"]:
+            raise HTTPException(status_code=400, detail="Insufficient stock", product=db_product['product_detail']["quantity"])
+        sql = """INSERT INTO sales_detail_ferroelectricos_yambitara (sale_id, sale_id_detail, product_id, product_name, quantity_product, cost_product, profit_product, discount_product, sale_product)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        sale_id_detail = pwd_context.hash(data_sale_product["sale_id"] + data_sale_product["product_id"] + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        data = (
+            sale_id, sale_id_detail, data_sale_product["product_id"], data_sale_product["product_name"],
+            data_sale_product["quantity_product"], data_sale_product["cost_product"], data_sale_product["profit_product"], data_sale_product["discount_product"], data_sale_product["sale_product"]
+        )
+        user_id = query_db_insert(sql, data)
         
-        # sql = """INSERT INTO productos_facturacion (sale_id, id_sale_dian, user_id, seller_id, product_id, product_name, quantity_product, cost_product, profit_product, discount_product, sale_product)
-        #             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
-        # data = (
-        #     row["sale_id"], row["id_sale_dian"], row["user_id"], row["seller_id"], row["product_id"], row["product_name"],
-        #     row["quantity_product"], row["cost_product"], row["profit_product"], row["discount_product"], row["sale_product"]
-        # )
-        # user_id = query_db_insert(sql, data)
+    sql = """INSERT INTO sales_ferroelectricos_yambitara (sale_id, id_sale_dian, user_id, seller_id, sale_cost, sale_discount, sale_profit, sale_total)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"""
+    id_sale_dian = pwd_context.hash("id_sale_dian_test"+ datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+    sale_cost = df["cost_product"].sum()
+    sale_discount = df["discount_product"].sum()
+    sale_profit = df["profit_product"].sum()
+    sale_total = df["sale_product"].sum()
+    
+    data = (
+        sale_id, id_sale_dian, factura.user_id, factura.seller_id,
+        float(sale_cost), float(sale_discount), float(sale_profit), float(sale_total))
+    user_id = query_db_insert(sql, data)
     raise HTTPException(status_code=200, detail="Bill register")   
 
+@router_factura.get("/sales_details/", 
+    status_code=status.HTTP_200_OK,
+    tags=['Bill'],
+    summary="""Get all sales details.""")
+async def get_all_sales_details():
+    sql = f"SELECT * FROM {os.getenv('DB_SALE_TABLE_DETAIL')};"
+    print(sql)
+    sales_details = query_db(sql)
+    if not sales_details:
+        raise HTTPException(status_code=404, detail="No sales details found")
+    return sales_details
 
 @router_factura.get("/bills_registered/", 
     status_code=status.HTTP_200_OK,

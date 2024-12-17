@@ -64,19 +64,20 @@ CREATE TABLE IF NOT EXISTS suppliers_ferroelectricos_yambitara (
 -- Crear una tabla para registrar las ventas
 CREATE TABLE IF NOT EXISTS sales_ferroelectricos_yambitara (
     sale_id VARCHAR(255) PRIMARY KEY,
-    id_sale_dian VARCHAR(50) NOT NULL,
+    id_sale_dian VARCHAR(255) NOT NULL,
     user_id VARCHAR(255) NOT NULL,
-    seller_id VARCHAR(50) NOT NULL,
+    seller_id VARCHAR(255) NOT NULL,
     sale_cost DECIMAL(15, 2) NOT NULL,
     sale_discount DECIMAL(15, 2) NOT NULL,
     sale_profit DECIMAL(15, 2) NOT NULL,
     sale_total DECIMAL(15, 2) NOT NULL,
     sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users_ferroelectricos_yambitara(user_id)
+    FOREIGN KEY (user_id) REFERENCES users_ferroelectricos_yambitara(user_id),
+    FOREIGN KEY (sale_id) REFERENCES sales_ferroelectricos_yambitara(sale_id)
 );
 -- Crear una tabla para registrar las ventas
 CREATE TABLE IF NOT EXISTS sales_detail_ferroelectricos_yambitara (
-    sale_id_detail INT PRIMARY KEY,
+    sale_id_detail VARCHAR(255) PRIMARY KEY,
     sale_id VARCHAR(255) NOT NULL,
     product_id VARCHAR(255) NOT NULL,
     product_name VARCHAR(100) NOT NULL,
@@ -86,7 +87,6 @@ CREATE TABLE IF NOT EXISTS sales_detail_ferroelectricos_yambitara (
     discount_product DECIMAL(15, 2) NOT NULL,
     sale_product DECIMAL(15, 2) NOT NULL,
     sale_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sale_id) REFERENCES sales_ferroelectricos_yambitara(sale_id),
     FOREIGN KEY (product_id) REFERENCES products_ferroelectricos_yambitara(product_id)
 );
 

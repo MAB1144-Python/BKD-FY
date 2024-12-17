@@ -90,3 +90,14 @@ volumen especifico
 ## docker rmi bkd-fy-app
 ## docker rmi bkd-fy-db
 ## docker volume rm db_volumes_Ferroelectricos_Yambitara
+
+docker run cloudflare/cloudflared:latest tunnel --no-autoupdate run --token eyJhIjoiNzZlM2YxNWI1YjNjMjRmMWMyZTc4MzRlMWQyZjE0YTYiLCJ0IjoiNjIwMzBjMzgtZjdkNS00MTQ2LWE0YjEtYjBmYTIwMmQ0ZDFhIiwicyI6IllUZGpaV1kyT0dZdE56WmxaQzAwWlRobUxXSTBZbUV0WkdKak9EVmhaVGd6WXpabCJ9
+
+docker run --net=host -e TZ=Europe/Prague -v /your-data-dir/data:/data --name "mailserver" -h "mail.example.com" -t analogic/poste.io
+
+docker run --net=host -e CO=America/Bogota -v /data:/data --name "mailserver" -h "mail.mabserver.online" -t analogic/poste.io
+
+
+terraform
+https://www.youtube.com/watch?v=1itPqkU8XZw
+https://www.youtube.com/watch?v=K4-uD1VHCz0&t=88s
