@@ -225,9 +225,10 @@ def query_db_fetchall(query: str):
                 # execute the INSERT statement
                 cur.execute(query)
                 result = cur.fetchall()
-                print("result ",result)
+                df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
+                json_result = df.to_json(orient='records')
                 conn.commit()
-                return {"message":result}
+                return {"message": json_result}
     except (Exception, psycopg2.DatabaseError) as error:
         print("error db",error)
         raise HTTPException(status_code=400, detail="Error in the server")
@@ -268,8 +269,12 @@ def query_db(query: str):
                 cur.execute(query)
                 result = cur.fetchall()
                 print(result)
-        return result
+                df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
+                json_result = df.to_json(orient='records')
+                print(json_result)
+                return json_result
+        raise HTTPException(status_code=400, detail="Error in the server")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=400, detail="Error in the server")
     
     

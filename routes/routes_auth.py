@@ -128,7 +128,6 @@ async def update_user_info(user: UserUpdate):
     query_db_update(sql, data)
     return {"detail": "User information updated successfully"}
 
-
 @router_auth.put("/update_user_type/",
     status_code=status.HTTP_200_OK,
     tags=['Auth'],

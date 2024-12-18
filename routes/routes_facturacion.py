@@ -31,7 +31,7 @@ async def create_factura(factura: FacturaCreate):
     db_seller = query_user_exists_user_id(factura.seller_id)
     if not db_seller["message"]:
         raise HTTPException(status_code=400, detail="Seller not registered")
-    print(db_seller)
+
     if db_seller["user_info"]["type_user"] not in ["seller", "online", "admin"]:
         raise HTTPException(status_code=400, detail="Seller unauthorized")
 
@@ -113,11 +113,10 @@ async def create_factura(factura: FacturaCreate):
     summary="""Get all sales details.""")
 async def get_all_sales_details():
     sql = f"SELECT * FROM {os.getenv('DB_SALE_TABLE_DETAIL')};"
-    print(sql)
     sales_details = query_db(sql)
     if not sales_details:
         raise HTTPException(status_code=404, detail="No sales details found")
-    return sales_details
+    return HTTPException(status_code=200, detail= {"data": sales_details})
 
 @router_factura.get("/bills_registered/", 
     status_code=status.HTTP_200_OK,
@@ -125,8 +124,7 @@ async def get_all_sales_details():
     summary="""Get all bills.""")
 async def get_all_bills():
     sql = f"SELECT * FROM {os.getenv('DB_SALE_TABLE')};"
-    print(sql)
     bills = query_db(sql)
     if not bills:
         raise HTTPException(status_code=404, detail="No bills found")
-    return bills
+    return HTTPException(status_code=200, detail= {"data": bills})

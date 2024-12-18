@@ -116,5 +116,5 @@ async def delete_product(product_id: str):
 async def get_products():
     sql = f"SELECT * FROM {os.getenv('DB_PRODUCT_TABLE')};"
     products = query_db(sql)
-    return {"status": 200, "data": products}
+    return HTTPException(status_code=200, detail= {"data": products})
 
