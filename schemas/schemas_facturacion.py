@@ -93,8 +93,8 @@ class FacturaCreate(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-            "user_id": "user_123",
-            "seller_id": "seller_123",
+            "user_id": "$2b$12$pKokMenzC3U41ilnL2s07uIBkkkr7TaTXnb9wWXNZQfdlrRWQVZZy",
+            "seller_id": "$2b$12$8jWbrZDeGl6Snx3lb7yfvuogxqO0a319aGa7vcTrGQ1rpukYbu/By",
             "productos": [
                 {
                 "product_id": "p1",

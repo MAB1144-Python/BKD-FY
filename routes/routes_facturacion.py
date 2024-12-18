@@ -25,6 +25,16 @@ router_factura = APIRouter()
     # response_model=FacturaResponse
     summary="""Register bill.""")
 async def create_factura(factura: FacturaCreate):
+    db_user = query_user_exists_user_id(factura.user_id)
+    if not db_user["message"]:
+        raise HTTPException(status_code=200, detail="User not registered")
+    db_seller = query_user_exists_user_id(factura.seller_id)
+    if not db_seller["message"]:
+        raise HTTPException(status_code=400, detail="Seller not registered")
+    print(db_seller)
+    if db_seller["user_info"]["type_user"] not in ["seller", "online", "admin"]:
+        raise HTTPException(status_code=400, detail="Seller unauthorized")
+
     df = pd.DataFrame([], columns=[
         "sale_id",
         "id_sale_dian",
@@ -75,6 +85,12 @@ async def create_factura(factura: FacturaCreate):
             data_sale_product["quantity_product"], data_sale_product["cost_product"], data_sale_product["profit_product"], data_sale_product["discount_product"], data_sale_product["sale_product"]
         )
         user_id = query_db_insert(sql, data)
+
+        # Update the product quantity in the database
+        new_quantity = db_product['product_detail']["quantity"] - data_sale_product["quantity_product"]
+        update_sql = f"""UPDATE {os.getenv('DB_PRODUCT_TABLE')} SET quantity = %s WHERE product_id = %s;"""
+        update_data = (new_quantity, data_sale_product["product_id"])
+        query_db_insert(update_sql, update_data)
         
     sql = """INSERT INTO sales_ferroelectricos_yambitara (sale_id, id_sale_dian, user_id, seller_id, sale_cost, sale_discount, sale_profit, sale_total)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"""

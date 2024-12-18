@@ -93,13 +93,14 @@ CREATE TABLE IF NOT EXISTS sales_detail_ferroelectricos_yambitara (
 -- Insertar registros de ejemplo en la tabla 'users_ferroelectricos_yambitara'
 INSERT INTO users_ferroelectricos_yambitara (user_id, document, name, email, password, type_user, type_document, contact_user)
 VALUES 
-('1', '123456789', 'John Doe', 'john.doe@example.com', '$2b$12$GyzIsbet9oPpq3VBVf1jNOyT7Rv85GfafWz2BhEen645LeTd/EEaK', 'admin', 'ID', '123-456-7890'),
-('2', '987654321', 'Jane Smith', 'jane.smith@example.com', '$2b$12$s1P12wOVDbxRfKNywHfec.KnCU6y3sxEn3DeHtB0RT1sFvSTjNEeO', 'user', 'ID', '098-765-4321'),
-('3', '234567890', 'Alice Johnson', 'alice.johnson@example.com', '$2b$12$GUrQ65IJkPQw.vjBoj1QlupKkxy5deomJu0nk2w7qe7dxnyIMsWbG', 'seller', 'ID', '234-567-8901'),
-('4', '345678901', 'Bob Brown', 'bob.brown@example.com', '$2b$12$U6CWGzE.S6OnwtQWzmLfVegiZ9dIi6TwPeJYvlUz2WclBUMtOmDSO', 'user', 'ID', '345-678-9012'),
-('5', '456789012', 'Charlie Davis', 'charlie.davis@example.com', '$2b$12$R2.tpthprkj9VxiEbsDzdec1yP4hCSv5Cj9P3p8cQ8KyqeXiyuPiC', 'user', 'ID', '456-789-0123'),
-('6', '567890123', 'Diana Evans', 'diana.evans@example.com', '$2b$12$HriNGxDxtxwOoJJHVtpKq.dpj45aSh/WNyqvqUSmuYJaek7DmTnTm', 'user', 'ID', '567-890-1234'),
-('7', '678901234', 'Ethan Harris', 'ethan.harris@example.com', '$2b$12$.1hCPiFu.NDK/pajybHTCuW.xbAa2b251pGg8LbfDdFxc4MDBc/jG', 'user', 'ID', '678-901-2345');
+('$2b$12$s8n2MpTsu2e1fUdZfUGS5eEealaszcDlNi6q9O2N.wbYMp1s8X1v6', '123456789', 'John Doe', 'john.doe@example.com', '$2b$12$GyzIsbet9oPpq3VBVf1jNOyT7Rv85GfafWz2BhEen645LeTd/EEaK', 'admin', 'ID', '123-456-7890'),
+('$2b$12$Pse2Ug6V2tUksP8HR/G6f.CaW9N/x1xBXwU.7FBBwzzlxSQ/4/IEy', '99999999999', 'Plataform Online', 'PlataformOnline@Online.com', '$2b$12$GyzIsbet9oPpq3VBVf1jNOyT7Rv85GfafWz2BhEen645LeTd/EEaK', 'online', 'ID', '123-456-7890'),
+('$2b$12$8jWbrZDeGl6Snx3lb7yfvuogxqO0a319aGa7vcTrGQ1rpukYbu/By', '987654321', 'Jane Smith', 'jane.smith@example.com', '$2b$12$s1P12wOVDbxRfKNywHfec.KnCU6y3sxEn3DeHtB0RT1sFvSTjNEeO', 'seller', 'ID', '098-765-4321'),
+('$2b$12$SzmJ3FpF3z11OiO4d9g8MOOYtnG1lc0qACEwWy4hQlwYx/ua7zBee', '234567890', 'Alice Johnson', 'alice.johnson@example.com', '$2b$12$GUrQ65IJkPQw.vjBoj1QlupKkxy5deomJu0nk2w7qe7dxnyIMsWbG', 'seller', 'ID', '234-567-8901'),
+('$2b$12$9bPfGREaUTGx9f9t8kPgg.wCm.G/OQmWY6dFTjV4eLpytwuOlbFZK', '345678901', 'Bob Brown', 'bob.brown@example.com', '$2b$12$U6CWGzE.S6OnwtQWzmLfVegiZ9dIi6TwPeJYvlUz2WclBUMtOmDSO', 'user', 'ID', '345-678-9012'),
+('$2b$12$HgMSLGOwqIgp7sr6F/C1BOFFl7.RzbkGBDAxrgQNk6hz6J1NL6tIW', '456789012', 'Charlie Davis', 'charlie.davis@example.com', '$2b$12$R2.tpthprkj9VxiEbsDzdec1yP4hCSv5Cj9P3p8cQ8KyqeXiyuPiC', 'user', 'ID', '456-789-0123'),
+('$2b$12$pd9hwgUOUMCuiAXtML7GBeZ802e11fNWDzDmawnctEVtQWWHu5vQy', '567890123', 'Diana Evans', 'diana.evans@example.com', '$2b$12$HriNGxDxtxwOoJJHVtpKq.dpj45aSh/WNyqvqUSmuYJaek7DmTnTm', 'user', 'ID', '567-890-1234'),
+('$2b$12$pKokMenzC3U41ilnL2s07uIBkkkr7TaTXnb9wWXNZQfdlrRWQVZZy', '678901234', 'Ethan Harris', 'ethan.harris@example.com', '$2b$12$.1hCPiFu.NDK/pajybHTCuW.xbAa2b251pGg8LbfDdFxc4MDBc/jG', 'user', 'ID', '678-901-2345');
 
 -- Insertar registros de ejemplo en la tabla 'user_types_ferroelectricos_yambitara'
 INSERT INTO user_types_ferroelectricos_yambitara (document, type_name, description)

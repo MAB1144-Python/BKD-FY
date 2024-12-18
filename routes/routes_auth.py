@@ -29,8 +29,7 @@ class Token(BaseModel):
     #response_model = UserCreate,
     summary="""Register usuario.""")
 async def register(user: UserCreate):
-    hashed_password = pwd_context.hash(user.password)
-    print(hashed_password)
+    hashed_password = pwd_context.hash(user.password)    
     db_user = query_user_exists_email(user.email) 
     if db_user["message"]:
         raise HTTPException(status_code=400, detail="email already registered")
@@ -93,7 +92,6 @@ async def get_users():
     summary="""Get user by email.""")
 async def get_user_by_email(email: str):
     db_user = query_user_exists_email(email)
-    print(db_user)
     if not db_user["message"]:
         raise HTTPException(status_code=400, detail="User not registered")
     """ Retrieve user information from the users_ferroelectricos_yambitara table """
