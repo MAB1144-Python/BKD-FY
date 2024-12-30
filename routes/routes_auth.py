@@ -77,7 +77,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
             headers={"WWW-Authenticate": "Bearer"},
         )
    
-   
 @router_auth.get("/users",
     status_code=status.HTTP_200_OK,
     tags=['Auth'],
@@ -95,19 +94,20 @@ async def get_user_by_email(email: str):
     if not db_user["message"]:
         raise HTTPException(status_code=400, detail="User not registered")
     """ Retrieve user information from the users_ferroelectricos_yambitara table """
-    sql = """SELECT email, document, name, type_document, contact_user, type_user
+    sql = """SELECT user_id, email, document, name, type_document, contact_user, type_user
              FROM users_ferroelectricos_yambitara WHERE email = %s;"""
     data = (email,)
     db_user = query_db_fetchone(sql, data)
     if not db_user:
         raise HTTPException(status_code=404, detail="User information not found")
     return {
-        "email": db_user["message"][0],
-        "document": db_user["message"][1],
-        "name": db_user["message"][2],
-        "type_document": db_user["message"][3],
-        "contact_user": db_user["message"][4],
-        "type_user": db_user["message"][5],
+        "user_id": db_user["message"][0],
+        "email": db_user["message"][1],
+        "document": db_user["message"][2],
+        "name": db_user["message"][3],
+        "type_document": db_user["message"][4],
+        "contact_user": db_user["message"][5],
+        "type_user": db_user["message"][6],
     }
 
 @router_auth.put("/update_user_info/",
