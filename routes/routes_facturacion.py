@@ -105,20 +105,37 @@ async def create_factura(factura: FacturaCreate):
         sale_id, id_sale_dian, factura.user_id, factura.seller_id,
         float(sale_cost), float(sale_discount), float(sale_profit), float(sale_total))
     user_id = query_db_insert(sql, data)
-    raise HTTPException(status_code=200, detail="Bill register")   
+    
+    # Fetch the invoice number using the sale_id
+    fetch_sql = f"SELECT invoice_number FROM sales_ferroelectricos_yambitara WHERE sale_id = %s;"
+    invoice_number = query_db_fetchone(fetch_sql, (sale_id,))["message"][0]
+    invoice_number = f"FAV-{str(invoice_number).zfill(6)}"
+    raise HTTPException(status_code=200, detail={"Billing number": invoice_number}) 
 
-@router_factura.get("/sales_details/", 
+@router_factura.post("/sales_details/", 
     status_code=status.HTTP_200_OK,
     tags=['Bill'],
     summary="""Get all sales details.""")
-async def get_all_sales_details():
-    sql = f"SELECT * FROM {os.getenv('DB_SALE_TABLE_DETAIL')};"
-    sales_details = query_db(sql)
+async def get_all_sales_details(invoice_number: str):
+    if not invoice_number.startswith("FAV-"):
+        raise HTTPException(status_code=400, detail="Invalid invoice number format")
+    invoice_number = int(invoice_number.replace("FAV-", ""))
+        
+    # Fetch the sale_id using the invoice_number
+    fetch_sql = f"SELECT sale_id FROM {os.getenv('DB_SALE_TABLE')} WHERE invoice_number = %s;"
+    sale_id_result = query_db_fetchone(fetch_sql, (invoice_number,))
+    if not sale_id_result:
+        raise HTTPException(status_code=404, detail="Invoice number not found")
+    sale_id = sale_id_result["message"][0]
+    print("aqui bien",sale_id)
+    sql = f"SELECT * FROM {os.getenv('DB_SALE_TABLE_DETAIL')} WHERE sale_id = %s;"
+    sales_details = query_db_fetchone_all(sql, (sale_id,))
+
     if not sales_details:
         raise HTTPException(status_code=404, detail="No sales details found")
     return HTTPException(status_code=200, detail= {"data": sales_details})
 
-@router_factura.get("/bills_registered/", 
+@router_factura.post("/bills_registered/", 
     status_code=status.HTTP_200_OK,
     tags=['Bill'],
     summary="""Get all bills.""")

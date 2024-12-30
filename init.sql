@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS suppliers_ferroelectricos_yambitara (
 CREATE TABLE IF NOT EXISTS sales_ferroelectricos_yambitara (
     sale_id VARCHAR(255) PRIMARY KEY,
     id_sale_dian VARCHAR(255) NOT NULL,
+    invoice_number INT NOT NULL CHECK (invoice_number >= 1) GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1),
     user_id VARCHAR(255) NOT NULL,
     seller_id VARCHAR(255) NOT NULL,
     sale_cost DECIMAL(15, 2) NOT NULL,

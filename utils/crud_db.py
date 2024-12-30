@@ -256,7 +256,6 @@ def get_all_users():
             with conn.cursor() as cur:
                 cur.execute(sql)
                 users = cur.fetchall()
-            print("userssssssss",users)
     except (Exception, psycopg2.DatabaseError) as error:
         print("Error: ", error)
     return users
@@ -268,13 +267,24 @@ def query_db(query: str):
             with conn.cursor() as cur:
                 cur.execute(query)
                 result = cur.fetchall()
-                print(result)
                 df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
                 json_result = df.to_json(orient='records')
-                print(json_result)
                 return json_result
         raise HTTPException(status_code=400, detail="Error in the server")
     except Exception as e:
         raise HTTPException(status_code=400, detail="Error in the server")
     
-    
+def query_db_fetchone_all(sql_query: str, data: tuple):
+    try:
+        config = load_config()
+        with  psycopg2.connect(**config) as conn:
+            with  conn.cursor() as cur:
+                # execute the INSERT statement
+                cur.execute(sql_query, data,)
+                result = cur.fetchall()
+                df = pd.DataFrame(result, columns=[desc[0] for desc in cur.description])
+                result = df.to_json(orient='records')
+                return {"message":result}
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("error db",error)
+        raise HTTPException(status_code=400, detail="Error in the server")
