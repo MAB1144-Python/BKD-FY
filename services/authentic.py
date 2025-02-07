@@ -34,7 +34,6 @@ settings = Settings()
 def authenticate(email: str, password: str) -> Optional[User]:
     #try:
         variable_get_user_by_email = get_item_by_email(email)
-        print("variable_get_user_by_email", variable_get_user_by_email)
         if variable_get_user_by_email["message"]:
                 # si en el usuario se encuentra un @ significa que es un email 
                 check_result_by_username=verify_password(password=password, hashed_pass=variable_get_user_by_email["password"])
